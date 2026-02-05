@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>資産化 体験アプリ（UD版）</title>
+  <style>
+    :root{
+      /* ダークモード（デフォルト） */
+      --bg1:#0b192e;
+      --bg2:#112240;
+      --card-bg:rgba(30, 41, 59, 0.7);
+      --card-border:rgba(255,255,255,0.15);
+      --text-main:#f1f5f9;
+      --text-muted:#94a3b8;
+      --accent:#3b82f6;
+      --accent-hover:#2563eb;
+      --success:#10b981;
+      --shadow:0 10px 15px -3px rgba(0,0,0,0.3);
+      --radius:16px;
+      --input-bg:rgba(0,0,0,0.3);
+      --modal-bg:#1e293b;
+    }
+
+    /* ライトモード */
+    [data-theme="light"] {
+      --bg1:#f8fafc;
+      --bg2:#e2e8f0;
+      --card-bg:rgba(255, 255, 255, 0.85);
+      --card-border:rgba(0,0,0,0.1);
+      --text-main:#0f172a;
+      --text-muted:#475569;
+      --accent:#2563eb; /* 少し濃い青に */
+      --accent-hover:#1d4ed8;
+      --success:#059669;
+      --shadow:0 10px 15px -3px rgba(0,0,0,0.1);
+      --input-bg:rgba(255,255,255,0.6);
+      --modal-bg:#ffffff;
+    }
+
+    body{
+      margin:0;
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Biz UDPGothic", system-ui, sans-serif;
+      color:var(--text-main);
+      background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15), transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1), transparent 40%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:20px;
+      line-height:1.6;
+      font-size:16px; 
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .wrap{ width:min(1000px, 100%); position:relative; }
+
+    /* ヘッダーツールバー（右上配置） */
+    .top-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+    }
+    .icon-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .icon-btn svg { width: 24px; height: 24px; pointer-events: none; }
+
+    /* ヘッダー周り */
+    .hero{
+      text-align:center;
+      margin-bottom:24px;
+      padding:10px;
+    }
+    .hero h1{
+      margin:0 0 12px;
+      font-size:clamp(24px, 4vw, 32px);
+      letter-spacing:.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .hero p{
+      margin:0;
+      color:var(--text-muted);
+      font-size:15px;
+    }
+
+    /* グリッドレイアウト */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:24px;
+    }
+    @media(min-width:900px){
+      .grid{ grid-template-columns: 1fr 1fr; align-items:start; }
+    }
+
+    /* カード共通デザイン */
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius);
+      padding:24px;
+      backdrop-filter: blur(12px);
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .card-header{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid var(--card-border);
+      padding-bottom:12px;
+      margin-bottom:4px;
+    }
+    .card-header h2{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+    }
+    .icon-box{
+      width:32px; height:32px;
+      background:rgba(125, 125, 125, 0.1);
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: var(--text-main);
+    }
+
+    /* タブ切り替え */
+    .tabs{
+      display:grid;
+      grid-template-columns: 1fr 1fr; /* 2列 */
+      gap:10px;
+    }
+    .tab{
+      border:1px solid var(--card-border);
+      background:rgba(0,0,0,0.05);
+      color:var(--text-muted);
+      padding:14px 10px;
+      border-radius:12px;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.2s;
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .tab:hover{ background:rgba(125,125,125,0.1); }
+    .tab.active{
+      background:rgba(59, 130, 246, 0.2);
+      border-color:var(--accent);
+      color:var(--text-main);
+      transform:scale(1.02);
+    }
+    [data-theme="light"] .tab.active {
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .tab svg{ width:20px; height:20px; }
+
+    /* 入力エリア */
+    .field-group{ display:flex; flex-direction:column; gap:12px; }
+    
+    input, textarea{
+      width:100%;
+      box-sizing:border-box;
+      border:2px solid var(--card-border);
+      background:var(--input-bg);
+      color:var(--text-main);
+      border-radius:12px;
+      padding:14px 16px;
+      font-size:16px;
+      outline:none;
+      transition: border-color 0.2s, background 0.3s;
+    }
+    textarea{ min-height:160px; resize:vertical; line-height:1.7; }
+    input:focus, textarea:focus{ border-color:var(--accent); }
+
+    /* ファイルアップロード用のスタイル */
+    .file-drop-area {
+      border: 2px dashed var(--card-border);
+      background: rgba(125,125,125,0.02);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      color: var(--text-muted);
+    }
+    .file-drop-area:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+      color: var(--text-main);
+    }
+    .file-icon-large {
+      width: 48px; height: 48px;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    .hint-box{
+      background:rgba(125,125,125,0.05);
+      padding:10px 14px;
+      border-radius:8px;
+      font-size:13px;
+      color:var(--text-muted);
+      display:flex;
+      gap:8px;
+      align-items:start;
+    }
+
+    /* ボタンエリア */
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin-top:8px;
+    }
+    
+    .btn-primary{
+      width:100%;
+      border:none;
+      background:linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color:white;
+      padding:18px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:0.05em;
+      cursor:pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      transition: transform 0.1s, box-shadow 0.1s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+    }
+    .btn-primary:active{ transform:scale(0.98); box-shadow:none; }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* 出力エリア */
+    .output-section{
+      display:none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .output-section.show{ display:flex; }
+
+    @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+    .asset-card{
+      background:rgba(125,125,125,0.03);
+      border:1px solid var(--card-border);
+      border-radius:12px;
+      overflow:hidden;
+    }
+    .asset-head{
+      background:rgba(125,125,125,0.08);
+      padding:8px 16px; /* 上下パディング調整 */
+      font-size:14px;
+      font-weight:700;
+      color:var(--text-muted);
+      display:flex;
+      align-items:center;
+      justify-content: space-between; /* 両端揃え */
+    }
+    .asset-head-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .asset-body{
+      padding:16px;
+    }
+    .asset-body pre{
+      margin:0;
+      white-space:pre-wrap;
+      font-family:inherit;
+      font-size:15px;
+      color:var(--text-main);
+    }
+    
+    /* コピーボタン */
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      opacity: 0.7;
+    }
+    .copy-btn:hover {
+      background: rgba(125,125,125,0.1);
+      color: var(--text-main);
+      opacity: 1;
+    }
+    .copy-btn svg { width: 18px; height: 18px; }
+
+    /* ツールバー */
+    .toolbar{
+      display:flex;
+      gap:8px;
+      margin-top:auto;
+      padding-top:10px;
+    }
+    .tool-btn{
+      flex:1;
+      padding:10px;
+      background:rgba(125,125,125,0.05);
+      border:1px solid var(--card-border);
+      border-radius:8px;
+      color:var(--text-muted);
+      font-size:12px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      transition:all 0.2s;
+    }
+    .tool-btn:hover{ background:rgba(125,125,125,0.1); color:var(--text-main); }
+    .tool-btn svg{ width:18px; height:18px; }
+
+    /* 履歴リスト用スタイル */
+    .history-section {
+      margin-top: 24px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 24px;
+      display: none; /* 初期非表示 */
+    }
+    .history-section.show { display: block; }
+    .history-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .history-item {
+      background: rgba(125,125,125,0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .history-item:hover {
+      background: rgba(125,125,125,0.1);
+      border-color: var(--accent);
+    }
+    .history-date {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .history-summary {
+      font-size: 14px;
+      color: var(--text-main);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-tags {
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .delete-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.5;
+    }
+    .delete-btn:hover {
+      opacity: 1;
+      color: #ef4444;
+    }
+
+    /* ステータス表示 */
+    .status-area{
+      min-height:24px;
+      font-size:14px;
+      text-align:center;
+      color:var(--success);
+      font-weight:600;
+    }
+
+    .footer{
+      margin-top:40px;
+      color:var(--text-muted);
+      font-size:12px;
+      text-align:center;
+      opacity:0.6;
+    }
+
+    /* モーダルスタイル */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 100;
+      padding:20px;
+      box-sizing: border-box;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--modal-bg);
+      color: var(--text-main);
+      padding: 24px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+      position: relative;
+    }
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+    .modal h3 { margin: 0 0 16px; font-size: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
+    .close-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: none; border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .settings-label { font-weight: 600; }
+    
+    /* トグルスイッチ */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #cbd5e1;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--accent); }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    /* モーダル内リスト */
+    .help-list {
+      padding-left: 20px;
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    .help-list li { margin-bottom: 8px; }
+
+    /* 設定下部の薄文字リンク */
+    .bottom-links {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 16px;
+    }
+    .text-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .text-link:hover { opacity: 1; text-decoration: underline; }
+
+    /* ロード中アニメーション用 */
+    .loading-pulse {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- 右上ツールバー -->
+  <div class="top-toolbar">
+    <button class="icon-btn" id="btnHelp" aria-label="使い方">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    </button>
+    <button class="icon-btn" id="btnSettings" aria-label="設定">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+  </div>
+
+  <div class="hero">
+    <h1>資産化 体験アプリ</h1>
+    <p>今ある資料を入れるだけ。「整理」して、一生使える資産へ。</p>
+  </div>
+
+  <div class="grid">
+    <!-- 入力セクション -->
+    <section class="card">
+      <div class="card-header">
+        <div class="asset-head-title">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
+          <h2>素材を入力</h2>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="setMode('url')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          URL
+        </button>
+        <button class="tab" onclick="setMode('text')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          テキスト
+        </button>
+        <button class="tab" onclick="setMode('memo')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+          メモ・音声
+        </button>
+        <button class="tab" onclick="setMode('file')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+          ファイル
+        </button>
+      </div>
+
+      <div class="field-group" id="inputArea">
+        <input id="mainInput" placeholder="例：https://..." />
+        
+        <div class="hint-box" id="hintText">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span>Webサイトや記事のURLを貼るだけで整理できます</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="runBtn">
+          整理して資産にする
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        
+        <div class="status-area" id="statusMsg"></div>
+      </div>
+    </section>
+
+    <div class="right-column" style="display:contents;">
+      <!-- 出力セクション -->
+      <section class="card output-section" id="outputCard">
+        <div class="card-header">
+          <div class="asset-head-title">
+            <div class="icon-box" style="background:rgba(16, 185, 129, 0.2); color:#10b981;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2>あなたの資産（整理済み）</h2>
+          </div>
+        </div>
+
+        <!-- 要約 -->
+        <div class="asset-card">
+          <div class="asset-head">
+            <div class="asset-head-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              要約・ポイント
+            </div>
+            <button class="copy-btn" onclick="copyText('outSummary')" title="コピー">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="asset-body">
+            <pre id="outSummary">ここにAIによる要約が表示されます。</pre>
+          </div>
+        </div>
+
+        <!-- 分類 -->
+        <div class="asset-card">
+          <div class="asset-head">
+            <div class="asset-head-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              分類タグ
+            </div>
+            <button class="copy-btn" onclick="copyText('outTags')" title="コピー">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="asset-body">
+            <pre id="outTags">#重要 #社内共有 #2024年度</pre>
+          </div>
+        </div>
+
+        <!-- 次の一手 -->
+        <div class="asset-card" style="border-color:rgba(59, 130, 246, 0.4);">
+          <div class="asset-head" style="color:var(--accent);">
+            <div class="asset-head-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              次の一手（アクション）
+            </div>
+            <button class="copy-btn" onclick="copyText('outAction')" title="コピー">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="asset-body">
+            <pre id="outAction">・まずタイトルを決める<br>・部内に共有する</pre>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="tool-btn" onclick="saveToLocal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            保存（履歴）
+          </button>
+          <button class="tool-btn" onclick="downloadAsText()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            PC保存
+          </button>
+          <!-- 共有ボタンを一般的な共有に更新 -->
+          <button class="tool-btn" onclick="shareAsset()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            共有
+          </button>
+        </div>
+      </section>
+
+      <!-- 履歴セクション -->
+      <section class="card history-section" id="historySection">
+        <div class="history-title">
+          <span>保存した資産一覧</span>
+          <span id="historyCount" style="font-size:12px; font-weight:normal;">0件</span>
+        </div>
+        <div class="history-list" id="historyList">
+          <!-- JSで生成 -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="footer">
+    Prototype: 最小構成の資産化アプリ
+  </div>
+</div>
+
+<!-- モーダル：設定 -->
+<div class="modal-overlay" id="modalSettingsOverlay">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modalSettingsOverlay')">×</button>
+    <h3>設定</h3>
+    
+    <div class="settings-row">
+      <span class="settings-label">配色（ダーク/ライト）</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="themeToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="bottom-links">
+      <button class="text-link" onclick="fillDemoData()">デモデータを入力（デモ用）</button>
+      <button class="text-link" onclick="clearData()">データをクリア</button>
+    </div>
+  </div>
+</div>
+
+<!-- モーダル：使い方 -->
+<div class="modal-overlay" id="modalHelpOverlay">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modalHelpOverlay')">×</button>
+    <h3>使い方ガイド</h3>
+    <ul class="help-list">
+      <li><strong>目的：</strong>今ある資料（URL・文章）を整理して、再利用可能な「資産」にします。</li>
+      <li><strong>手順1：</strong>入力形式を選びます。<br>（URL/テキスト/メモ/<strong>ファイル</strong>）</li>
+      <li><strong>手順2：</strong>内容を入力して「整理する」ボタンを押します。</li>
+      <li><strong>手順3：</strong>AIが要約・分類・アクションを提案します。</li>
+      <li><strong>保存：</strong>ブラウザ履歴や、テキストファイルとしてPCに保存できます。</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // UI State
+  let currentMode = 'url';
+  
+  const ui = {
+    inputArea: document.getElementById('inputArea'),
+    // input element reference is dynamic
+    hint: document.querySelector('#hintText span'),
+    tabs: document.querySelectorAll('.tab'),
+    output: document.getElementById('outputCard'),
+    status: document.getElementById('statusMsg'),
+    runBtn: document.getElementById('runBtn'),
+    historySection: document.getElementById('historySection'),
+    historyList: document.getElementById('historyList'),
+    historyCount: document.getElementById('historyCount')
+  };
+
+  const texts = {
+    url: { hint: "URLを貼るだけで、要約・分類して保存できます。" },
+    text: { hint: "長い文章も、要点を3つに絞って整理します。" },
+    memo: { hint: "箇条書きや断片的な言葉でも、AIが意図を汲み取ります。" },
+    file: { hint: "PDF・画像をAIが読み取って文字化・整理します。" }
+  };
+
+  // Switch Mode
+  window.setMode = (mode) => {
+    currentMode = mode;
+    ui.tabs.forEach((tab, index) => {
+      const modes = ['url', 'text', 'memo', 'file'];
+      if(modes[index] === mode) tab.classList.add('active');
+      else tab.classList.remove('active');
+    });
+
+    // Reset Input Area
+    ui.inputArea.innerHTML = '';
+    
+    if(mode === 'file') {
+      // Create File Upload UI
+      const fileArea = document.createElement('div');
+      fileArea.className = 'file-drop-area';
+      fileArea.innerHTML = `
+        <svg class="file-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="12"></line><line x1="15" y1="15" x2="12" y2="12"></line></svg>
+        <span style="font-weight:600;">ここをタップしてファイルを選択</span>
+        <span style="font-size:12px; opacity:0.7;">PDF, 画像（JPG, PNG）に対応</span>
+        <input type="file" id="fileInput" style="display:none;" accept="image/*,.pdf" onchange="handleFileSelect(this)">
+      `;
+      fileArea.onclick = () => document.getElementById('fileInput').click();
+      ui.inputArea.appendChild(fileArea);
+    } else {
+      // Create Text/URL Input
+      const el = (mode === 'url') ? document.createElement('input') : document.createElement('textarea');
+      el.id = 'mainInput';
+      el.placeholder = (mode === 'url') ? "例：https://..." : (mode === 'text' ? "議事録や資料のテキスト..." : "今の頭の中のモヤモヤ...");
+      ui.inputArea.appendChild(el);
+    }
+
+    // Hint Text
+    const hintBox = document.createElement('div');
+    hintBox.className = 'hint-box';
+    hintBox.id = 'hintText';
+    hintBox.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span>${texts[mode].hint}</span>
+    `;
+    ui.inputArea.appendChild(hintBox);
+
+    ui.output.classList.remove('show');
+    ui.status.textContent = "";
+  };
+
+  // Handle File Selection (Mock)
+  window.handleFileSelect = (input) => {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const area = document.querySelector('.file-drop-area');
+      
+      // Loading State
+      area.innerHTML = `
+        <div class="loading-pulse" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <svg class="file-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <span>「${file.name}」を解析中...</span>
+        </div>
+      `;
+
+      // Simulate OCR processing
+      setTimeout(() => {
+        // Switch to Textarea with extracted text
+        ui.inputArea.innerHTML = '';
+        const textarea = document.createElement('textarea');
+        textarea.id = 'mainInput';
+        textarea.value = `【${file.name} から抽出されたテキスト】\n\n契約書\n第1条（目的）\n甲は乙に対し、本件業務を委託し、乙はこれを受託する。\n\n第2条（期間）\n2024年4月1日から2025年3月31日までとする。\n...（以下略）`;
+        ui.inputArea.appendChild(textarea);
+        
+        // Add hint again
+        const hintBox = document.createElement('div');
+        hintBox.className = 'hint-box';
+        hintBox.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span style="color:var(--success);">読み取り完了！内容を確認して「整理する」を押してください。</span>
+        `;
+        ui.inputArea.appendChild(hintBox);
+
+        ui.status.textContent = "ファイルを読み込みました。";
+      }, 1500);
+    }
+  }
+
+  // Logic
+  ui.runBtn.addEventListener('click', () => {
+    const mainInput = document.getElementById('mainInput');
+    const val = mainInput ? mainInput.value.trim() : "";
+    
+    // File mode validation check (if file not selected yet)
+    if(currentMode === 'file' && document.querySelector('.file-drop-area')){
+      ui.status.style.color = "#fbbf24";
+      ui.status.textContent = "⚠ ファイルを選択してください。";
+      return;
+    }
+
+    if(!val) {
+      ui.status.style.color = "#fbbf24";
+      ui.status.textContent = "⚠ 入力が空です。何か入力してください。";
+      return;
+    }
+
+    ui.runBtn.disabled = true;
+    ui.runBtn.innerHTML = 'AIが整理中...';
+    ui.status.textContent = "";
+
+    setTimeout(() => {
+      // Mock Data Generation based on input text length/content (simple)
+      let summary = `【結論】\n資料の本質的価値を再定義。\n\n【ポイント】\n1. アナログ/デジタルを問わず集約する\n2. 自動タグ付けで「探す時間」をゼロに\n3. 次のアクションを提示し、死蔵を防ぐ`;
+      let tags = `#契約書管理 #重要書類 #DX\n#自動化 #2025年度`;
+      let action = `・原本をキャビネットのA棚に保管する\n・経理担当に写しを共有する\n・更新時期（来年3月）にアラートを設定する`;
+
+      // Use actual input value for summary if it looks like the demo data
+      if (val.includes("議事録")) {
+         summary = "【結論】DXツールの導入と広告費削減によるシステム投資を決定。\n【ポイント】\n1. 11月から「CloudFlow」の試験運用開始\n2. 広告費10%削減で原資確保\n3. 現場教育とセキュリティが次なる課題";
+         tags = "#経営企画 #DX #予算編成 #2024下期";
+         action = "・佐藤：10/20までに見積もり取得\n・田中：セキュリティシート確認";
+      } else if (val.includes("契約書")) {
+         summary = "【結論】2025年3月末までのWeb制作業務委託契約。\n【ポイント】\n1. 月額50万円（税別）の準委任契約\n2. 自動更新条項あり（1ヶ月前通知）\n3. 週1回の定例MTG参加義務";
+         tags = "#業務委託契約 #Web制作 #自動更新";
+         action = "・契約書フォルダへ保存\n・カレンダーに更新通知期限（2025/2/28）を登録\n・経理へ月次請求の連携";
+      }
+
+      document.getElementById('outSummary').textContent = summary;
+      document.getElementById('outTags').textContent = tags;
+      document.getElementById('outAction').textContent = action;
+
+      ui.output.classList.add('show');
+      ui.output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      ui.runBtn.disabled = false;
+      ui.runBtn.innerHTML = `整理して資産にする <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+      ui.status.style.color = "var(--success)";
+      ui.status.textContent = "完了しました！あなたの資産に追加されました。";
+
+    }, 800);
+  });
+
+  // Demo Logic with Realistic Data
+  window.fillDemoData = () => {
+    const el = document.getElementById('mainInput');
+    
+    if(currentMode === 'url') {
+      if(el) el.value = "https://example.com/project-dx-2025/report";
+    }
+    else if(currentMode === 'text') {
+      if(el) {
+        el.value = `【経営企画会議 議事録】
+日時：2024年10月15日 14:00-15:30
+参加者：佐藤、鈴木、田中、山田（書記）
+
+議題：
+1. 新規DXツールの導入について
+2. 来期予算の配分見直し
+
+決定事項：
+・DXツール「CloudFlow」の試験導入を決定。11月から営業部でパイロット運用開始。
+・予算については、広告費を10%削減し、システム投資へ回す方向で合意。
+
+懸念点・課題：
+・現場スタッフへの研修コストがかかるのではないか（鈴木）
+・セキュリティ要件の確認が必要（田中）
+
+Next Action：
+・佐藤：ベンダーへの見積もり依頼（期限：10/20）
+・田中：セキュリティチェックシートの確認と提出
+
+（以上、要約とタスク抽出をお願いします）`;
+      }
+    }
+    else if(currentMode === 'memo') {
+      if(el) {
+        el.value = `新規事業のアイデアメモ
+ターゲット：ITに不慣れな士業・経営者層
+課題：
+・資料が紙やPDFで散乱している
+・探すのに時間がかかる
+・「資産」として活用できていない
+
+解決案：
+・「放り込むだけ」で整理される箱アプリ
+・勝手にタグ付けしてくれるAI
+・「これどうだっけ？」と聞けば答えてくれるコンシェルジュ機能
+
+まずはプロトタイプを作って検証したい。`;
+      }
+    }
+    else if(currentMode === 'file') {
+      ui.inputArea.innerHTML = '';
+      const textarea = document.createElement('textarea');
+      textarea.id = 'mainInput';
+      textarea.value = `【スキャン画像_20241015.pdf から抽出】
+
+業務委託契約書
+
+第1条（目的）
+甲は乙に対し、本件業務を委託し、乙はこれを受託する。
+本契約は、双方の信頼に基づくパートナーシップを構築することを目的とする。
+
+第2条（委託業務の内容）
+1. WebアプリケーションのUI/UXデザイン
+2. フロントエンド実装支援
+3. 定例ミーティングへの参加（週1回）
+
+第3条（報酬）
+月額：500,000円（税別）
+支払日：毎月末締め、翌月末払い
+
+第4条（契約期間）
+2024年11月1日から2025年3月31日までとする。
+ただし、期間満了の1ヶ月前までに申し出がない場合、自動更新とする。`;
+      
+      ui.inputArea.appendChild(textarea);
+      const hintBox = document.createElement('div');
+      hintBox.className = 'hint-box';
+      hintBox.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span style="color:var(--success);">デモファイルを読み込みました（OCR完了）</span>
+      `;
+      ui.inputArea.appendChild(hintBox);
+    }
+    
+    closeModal('modalSettingsOverlay');
+    toast("デモデータを入力しました。自動で整理を開始します...");
+    setTimeout(() => { ui.runBtn.click(); }, 500);
+  };
+
+  // ----------------------------------------------------------------
+  // LocalStorage Logic
+  // ----------------------------------------------------------------
+  const STORAGE_KEY = 'asset_app_data_v1';
+
+  window.saveToLocal = () => {
+    const summary = document.getElementById('outSummary').textContent;
+    const tags = document.getElementById('outTags').textContent;
+    const action = document.getElementById('outAction').textContent;
+    
+    if(!summary || summary.includes("ここにAIによる")) {
+       toast("保存するデータがありません");
+       return;
+    }
+
+    const newItem = {
+      id: Date.now(),
+      date: new Date().toLocaleString('ja-JP'),
+      summary: summary.split('\n')[0],
+      fullSummary: summary,
+      tags: tags,
+      action: action
+    };
+
+    const currentData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    currentData.unshift(newItem);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+
+    toast("ブラウザ（履歴）に保存しました！");
+    renderHistory();
+    ui.historySection.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Download as Text File
+  window.downloadAsText = () => {
+    const summary = document.getElementById('outSummary').textContent;
+    const tags = document.getElementById('outTags').textContent;
+    const action = document.getElementById('outAction').textContent;
+    
+    if(!summary || summary.includes("ここにAIによる")) {
+       toast("保存するデータがありません");
+       return;
+    }
+
+    const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, "");
+    const content = 
+`【資産化メモ】 ${new Date().toLocaleString('ja-JP')}
+
+■ 要約・ポイント
+${summary}
+
+■ 分類タグ
+${tags}
+
+■ 次の一手（アクション）
+${action}
+
+--------------------------------------------------
+Created by 資産化体験アプリ
+`;
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `資産化メモ_${dateStr}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast("テキストファイルをダウンロードしました");
+  };
+
+  // Share Logic (New)
+  window.shareAsset = async () => {
+    const summary = document.getElementById('outSummary').textContent;
+    const tags = document.getElementById('outTags').textContent;
+    const action = document.getElementById('outAction').textContent;
+    
+    if(!summary || summary.includes("ここにAIによる")) {
+       toast("共有するデータがありません");
+       return;
+    }
+
+    const shareText = `【資産化メモ】\n\n■要約\n${summary}\n\n■分類\n${tags}\n\n■アクション\n${action}`;
+
+    // Web Share API (Mobile / Supported Browsers)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '資産化メモ',
+          text: shareText
+        });
+      } catch (err) {
+        console.log('Share canceled or failed', err);
+      }
+    } else {
+      // Fallback: Copy to clipboard (PC etc)
+      const textArea = document.createElement("textarea");
+      textArea.value = shareText;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      textArea.style.top = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        toast("内容をクリップボードにコピーしました（共有非対応端末のため）");
+      } catch (err) {
+        toast("共有に失敗しました");
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
+  window.renderHistory = () => {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    
+    if(data.length > 0) {
+      ui.historySection.classList.add('show');
+      ui.historyCount.textContent = `${data.length}件`;
+    } else {
+      ui.historySection.classList.remove('show');
+    }
+
+    ui.historyList.innerHTML = data.map(item => `
+      <div class="history-item" onclick="loadAsset(${item.id})">
+        <div class="history-date">${item.date}</div>
+        <div class="history-summary">${item.summary}</div>
+        <div class="history-tags">${item.tags}</div>
+        <button class="delete-btn" onclick="deleteAsset(event, ${item.id})">×</button>
+      </div>
+    `).join('');
+  };
+
+  window.loadAsset = (id) => {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const item = data.find(d => d.id === id);
+    if(item) {
+      document.getElementById('outSummary').textContent = item.fullSummary;
+      document.getElementById('outTags').textContent = item.tags;
+      document.getElementById('outAction').textContent = item.action;
+      ui.output.classList.add('show');
+      ui.output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast("過去の資産を呼び出しました");
+    }
+  };
+
+  window.deleteAsset = (e, id) => {
+    e.stopPropagation();
+    if(!confirm("この資産を削除しますか？")) return;
+    
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    data = data.filter(d => d.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    renderHistory();
+    toast("削除しました");
+  };
+
+  window.clearData = () => {
+    setMode(currentMode);
+    ui.output.classList.remove('show');
+    ui.status.textContent = "";
+    
+    if(confirm("保存された全てのデータも消去しますか？")) {
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+    }
+    
+    closeModal('modalSettingsOverlay');
+    toast("データをクリアしました");
+  }
+
+  // 初期化時に履歴表示
+  renderHistory();
+
+  // ----------------------------------------------------------------
+  
+  // Toast
+  window.toast = (msg) => {
+    ui.status.style.color = "var(--accent)";
+    ui.status.textContent = msg;
+    setTimeout(() => ui.status.textContent = "", 3000);
+  };
+  
+  // Copy Logic
+  window.copyText = (id) => {
+    const text = document.getElementById(id).textContent;
+    if(!text) return;
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) toast("コピーしました！");
+      else toast("コピーに失敗しました");
+    } catch (err) {
+      console.error('Copy failed', err);
+      toast("コピーに失敗しました");
+    }
+    document.body.removeChild(textArea);
+  }
+
+  // Modal Controls
+  document.getElementById('btnSettings').addEventListener('click', () => {
+    document.getElementById('modalSettingsOverlay').classList.add('open');
+  });
+  document.getElementById('btnHelp').addEventListener('click', () => {
+    document.getElementById('modalHelpOverlay').classList.add('open');
+  });
+
+  window.closeModal = (id) => {
+    document.getElementById(id).classList.remove('open');
+  };
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // Theme Toggle
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('change', (e) => {
+    if(e.target.checked) {
+      document.body.setAttribute('data-theme', 'light');
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
+  });
+
+</script>
+</body>
+</html>
