@@ -33,11 +33,7 @@
       --modal-bg: #1e293b;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
@@ -70,7 +66,7 @@
       backdrop-filter: blur(10px);
     }
 
-    .header-left { flex: 0 0 auto; display: flex; align-items: center; gap: 10px;}
+    .header-left { flex: 0 0 auto; display: flex; align-items: center; gap: 12px;}
     .header-right { flex: 0 0 auto; display: flex; justify-content: flex-end; gap: 12px; }
 
     .app-icon {
@@ -83,23 +79,23 @@
     }
 
     .header-title h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: var(--primary);
       font-weight: bold;
       line-height: 1.2;
     }
     .header-title p {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-sub);
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
-    /* Header Icon Buttons */
+    /* Icon Buttons */
     .icon-btn {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-sub);
-      width: 44px; height: 44px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
@@ -110,12 +106,12 @@
       color: var(--text-main);
       border-color: var(--primary);
     }
-    .icon-btn svg { width: 24px; height: 24px; pointer-events: none; }
+    .icon-btn svg { width: 20px; height: 20px; pointer-events: none; }
 
     /* Main Grid */
     main {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 320px 1fr;
       gap: 24px;
       align-items: start;
     }
@@ -144,7 +140,7 @@
     .form-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
     .form-label {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 8px;
       font-weight: bold;
       margin-bottom: 12px;
       font-size: 1rem;
@@ -153,24 +149,21 @@
     .label-badge {
         background: var(--primary); color: #fff; 
         font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;
+        font-weight: bold;
     }
 
-    /* Purpose Chips - Vertical */
-    .purpose-selector { 
-        display: flex; 
-        flex-direction: column; 
-        gap: 8px; 
-    }
+    /* Purpose Chips (Vertical List) */
+    .purpose-selector { display: flex; flex-direction: column; gap: 8px; }
     .purpose-chip {
       background: rgba(0,0,0,0.03);
       border: 1px solid var(--border);
       color: var(--text-main);
       padding: 12px 14px;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.2s;
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; gap: 12px;
       text-align: left;
       width: 100%;
       line-height: 1.4;
@@ -183,12 +176,10 @@
       font-weight: bold;
       box-shadow: 0 0 0 1px var(--primary);
     }
-    .purpose-chip .icon { font-size: 1.2rem; }
+    .purpose-chip .icon { font-size: 1.2rem; min-width: 24px; text-align: center; }
 
     /* Tabs */
-    .tabs {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
-    }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .tab {
       background: rgba(0,0,0,0.03);
       border: 1px solid var(--border);
@@ -207,7 +198,6 @@
       color: #fff;
       border-color: var(--primary);
     }
-    .tab svg { width: 18px; height: 18px; }
 
     /* Inputs */
     .input-wrapper { position: relative; }
@@ -248,71 +238,50 @@
 
     /* Primary Button */
     .btn {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      cursor: pointer;
+      width: 100%; padding: 16px; border: none; border-radius: 8px;
+      font-weight: bold; font-size: 1.1rem; cursor: pointer;
       transition: transform 0.1s, box-shadow 0.2s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn:active { transform: scale(0.98); }
     .btn-primary {
-      background: var(--primary);
-      color: white;
+      background: var(--primary); color: white;
       box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
     }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-primary:disabled { background: #9CA3AF; cursor: not-allowed; box-shadow: none; }
 
-    /* Right Column (Results) */
-    .result-zone {
-      display: flex; flex-direction: column; gap: 20px;
-    }
+    /* Result Zone */
+    .result-zone { display: flex; flex-direction: column; gap: 20px; }
     
     .placeholder-message {
-        text-align: center;
-        padding: 60px;
-        color: var(--text-sub);
-        background: var(--card-bg);
-        border-radius: var(--radius);
+        text-align: center; padding: 60px; color: var(--text-sub);
+        background: var(--card-bg); border-radius: var(--radius);
         border: 2px dashed var(--border);
     }
 
     /* Cards */
     .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow);
-      border-left: 5px solid var(--primary);
-      animation: fadeIn 0.5s ease;
-      backdrop-filter: blur(10px);
+      background: var(--card-bg); border-radius: var(--radius); padding: 24px;
+      box-shadow: var(--shadow); border-left: 5px solid var(--primary);
+      animation: fadeIn 0.5s ease; backdrop-filter: blur(10px);
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;
     }
-    .card-header.between { justify-content: space-between; }
     .card-title {
       font-size: 1.1rem; font-weight: bold; color: var(--text-main);
       display: flex; align-items: center; gap: 8px;
     }
     .icon-box {
-      width: 32px; height: 32px;
-      background: rgba(125, 125, 125, 0.1);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; background: rgba(125, 125, 125, 0.1);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
       color: var(--text-main);
     }
     .card-body pre {
-      white-space: pre-wrap;
-      font-family: inherit;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      margin: 0;
+      white-space: pre-wrap; font-family: inherit; font-size: 0.95rem;
+      color: var(--text-main); margin: 0; line-height: 1.7;
     }
 
     /* Prompt Area */
@@ -331,41 +300,39 @@
     
     .prompt-tabs { display: flex; gap: 8px; margin-bottom: 0; }
     .p-tab {
-      font-size: 0.85rem;
-      padding: 6px 12px;
+      font-size: 0.85rem; padding: 6px 12px;
       border-radius: 6px 6px 0 0;
       border: 1px solid rgba(16, 185, 129, 0.3);
       background: rgba(255,255,255,0.1);
       color: var(--text-sub);
-      cursor: pointer;
-      border-bottom: none;
+      cursor: pointer; border-bottom: none;
     }
     .p-tab.active {
-      background: var(--card-bg);
-      color: var(--success);
-      font-weight: bold;
-      border-bottom: 1px solid var(--card-bg);
-      margin-bottom: -1px;
-      z-index: 1;
+      background: var(--card-bg); color: var(--success); font-weight: bold;
+      border-bottom: 1px solid var(--card-bg); margin-bottom: -1px; z-index: 1;
     }
 
     .prompt-box {
       background: var(--card-bg);
       border: 1px solid rgba(16, 185, 129, 0.3);
       border-radius: 0 6px 6px 6px;
-      padding: 16px;
-      position: relative;
+      padding: 16px; position: relative;
     }
     .prompt-text {
-      width: 100%; min-height: 120px;
+      width: 100%; min-height: 180px; /* 少し高く */
       border: none; background: transparent;
-      font-family: monospace; font-size: 0.9rem; color: var(--text-main);
-      resize: vertical; outline: none;
+      font-family: monospace; font-size: 0.95rem; color: var(--text-main);
+      resize: vertical; outline: none; line-height: 1.8; /* 行間ゆったり */
+      padding: 4px;
     }
     
-    .action-row {
-        display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;
+    .prompt-sub-header {
+      font-size: 0.85rem; font-weight: bold; color: var(--success);
+      margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.2); padding-bottom: 4px;
     }
+    
+    .action-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
     
     .btn-sm {
         font-size: 0.85rem; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border);
@@ -374,32 +341,27 @@
     .btn-sm:hover { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05); }
 
     .copy-all-btn {
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--primary);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 4px;
-      transition: all 0.2s;
+      background: rgba(59, 130, 246, 0.1); color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 12px;
+      border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 4px; transition: all 0.2s;
     }
     .copy-all-btn:hover { background: rgba(59, 130, 246, 0.2); transform: translateY(-1px); }
-
-    /* Footer */
-    .history-list {
-        margin-top: 20px;
-        display: flex; flex-direction: column; gap: 10px;
+    
+    .copy-mini-btn {
+      font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.8); color: var(--text-main); cursor: pointer;
     }
+    .copy-mini-btn:hover { border-color: var(--success); color: var(--success); }
+
+    /* History */
+    .history-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
     .history-item {
         background: var(--card-bg); border: 1px solid var(--border); padding: 12px; border-radius: 8px;
-        cursor: pointer; position: relative;
-        color: var(--text-main);
+        cursor: pointer; position: relative; color: var(--text-main);
     }
     .history-item:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
     
-    /* Animation */
     @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
     .hidden { display: none !important; }
 
@@ -411,70 +373,39 @@
       font-size: 0.95rem; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
     }
     .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
-
-    /* Loading Pulse */
     .loading-pulse { animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-    /* Footer Text */
-    .footer {
-      margin-top: 40px;
-      color: var(--text-sub);
-      font-size: 12px;
-      text-align: center;
-      opacity: 0.6;
-    }
+    .footer { margin-top: 40px; color: var(--text-sub); font-size: 12px; text-align: center; opacity: 0.6; }
 
-    /* Modal Styles */
+    /* Modal */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 100;
-      padding:20px;
-      box-sizing: border-box;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6);
+      display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s; z-index: 100; padding:20px; box-sizing: border-box;
     }
     .modal-overlay.open { opacity: 1; pointer-events: auto; }
     .modal {
-      background: var(--modal-bg);
-      color: var(--text-main);
-      padding: 24px;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-      transform: translateY(20px);
-      transition: transform 0.3s;
-      position: relative;
+      background: var(--modal-bg); color: var(--text-main); padding: 24px; border-radius: 16px;
+      width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      transform: translateY(20px); transition: transform 0.3s; position: relative;
     }
     .modal-overlay.open .modal { transform: translateY(0); }
     .modal h3 { margin: 0 0 16px; font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .close-btn {
-      position: absolute; top: 16px; right: 16px;
-      background: none; border: none; color: var(--text-sub);
-      cursor: pointer; font-size: 24px; line-height: 1;
+      position: absolute; top: 16px; right: 16px; background: none; border: none;
+      color: var(--text-sub); cursor: pointer; font-size: 24px; line-height: 1;
     }
     .settings-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    
-    /* Toggle Switch */
     .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
     .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--primary); }
     input:checked + .slider:before { transform: translateX(22px); }
-
     .bottom-links { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
     .text-link { background: none; border: none; color: var(--text-sub); font-size: 13px; cursor: pointer; text-align: left; padding: 0; opacity: 0.5; transition: opacity 0.2s; }
     .text-link:hover { opacity: 1; text-decoration: underline; color: var(--primary); }
-
-    /* Help List with Emojis */
     .help-list { padding-left: 0; margin: 0; font-size: 14px; color: var(--text-main); list-style: none; }
     .help-list li { margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
     .help-icon { font-size: 1.2rem; flex: 0 0 24px; text-align: center; }
@@ -496,7 +427,6 @@
         <p>今ある資料を整理して、AI指示書（プロンプト）を作成</p>
       </div>
     </div>
-    
     <div class="header-right">
       <button class="icon-btn" id="btnHelp" aria-label="使い方" onclick="openModal('modalHelpOverlay')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -511,7 +441,6 @@
   <main>
     <!-- LEFT: Input Zone -->
     <div class="input-zone">
-      
       <!-- 1. Purpose -->
       <div class="form-section">
         <div class="form-label">
@@ -549,7 +478,6 @@
             <span class="label-badge">STEP 2</span>
             素材を入力
         </div>
-        
         <div class="tabs">
           <button class="tab active" onclick="setMode('url')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
@@ -568,7 +496,6 @@
             ファイル(PDF/JPG)
           </button>
         </div>
-
         <div id="inputArea" class="input-wrapper">
           <input type="text" id="mainInput" placeholder="例：https://..." />
         </div>
@@ -578,20 +505,16 @@
         整理して資産にする
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </button>
-
     </div>
 
     <!-- RIGHT: Result Zone -->
     <div class="result-zone" id="resultZone">
-        <!-- Placeholder -->
         <div id="placeholder" class="placeholder-message">
             左側の項目を入力して<br>「整理して資産にする」を押してください。
         </div>
 
-        <!-- Output Content (Initially Hidden) -->
         <div id="outputContent" class="hidden">
-            
-            <!-- 整理結果カード -->
+            <!-- Summary Card -->
             <div class="card">
                 <div class="card-header between">
                     <div class="card-title">
@@ -599,7 +522,7 @@
                         整理された情報
                     </div>
                     <button class="copy-all-btn" onclick="copyAllText()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
                         すべてコピー
                     </button>
                 </div>
@@ -619,7 +542,7 @@
                 </div>
             </div>
 
-            <!-- プロンプト生成カード -->
+            <!-- Prompt Card -->
             <div class="prompt-area">
                 <div class="prompt-area-title">🚀 AI活用プロンプト</div>
                 <div class="prompt-tabs">
@@ -627,7 +550,8 @@
                     <button class="p-tab" onclick="switchPrompt('gemini')">Gemini</button>
                     <button class="p-tab" onclick="switchPrompt('notebook')">NotebookLM</button>
                 </div>
-                <div class="prompt-box">
+                <!-- Box will be dynamic based on AI selection -->
+                <div class="prompt-box" id="promptBox">
                     <textarea id="aiPrompt" class="prompt-text" readonly>プロンプトがここに生成されます...</textarea>
                     <div class="action-row">
                         <button class="btn-sm" onclick="copyText('aiPrompt')">
@@ -636,30 +560,23 @@
                         </button>
                     </div>
                 </div>
-                <p style="font-size:0.8rem; color:var(--text-sub); margin-top:8px; text-align:right;">
+                <p id="promptHint" style="font-size:0.8rem; color:var(--text-sub); margin-top:8px; text-align:right;">
                     👆 これをコピーして、各AIに貼り付けるだけで作業が完了します。
                 </p>
             </div>
 
-            <!-- アクションボタン群 -->
+            <!-- Footer Actions -->
             <div class="action-row" style="justify-content: center;">
-                <button class="btn-sm" onclick="saveToLocal()">
-                    💾 履歴に保存
-                </button>
-                <button class="btn-sm" onclick="downloadAsText()">
-                    ⬇️ PCに保存
-                </button>
-                <button class="btn-sm" onclick="shareAsset()">
-                    📤 共有
-                </button>
+                <button class="btn-sm" onclick="saveToLocal()">💾 履歴に保存</button>
+                <button class="btn-sm" onclick="downloadAsText()">⬇️ PCに保存</button>
+                <button class="btn-sm" onclick="shareAsset()">📤 共有</button>
             </div>
 
-            <!-- 履歴リスト -->
+            <!-- History -->
             <div id="historySection" class="hidden" style="margin-top:20px;">
                 <h3 style="font-size:1rem; color:var(--text-sub); margin-bottom:10px;">保存した資産一覧</h3>
                 <div id="historyList" class="history-list"></div>
             </div>
-
         </div>
     </div>
   </main>
@@ -669,12 +586,11 @@
   </div>
 </div>
 
-<!-- モーダル：設定 -->
+<!-- Modal: Settings -->
 <div class="modal-overlay" id="modalSettingsOverlay">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('modalSettingsOverlay')">×</button>
     <h3>設定</h3>
-    
     <div class="settings-row">
       <span class="settings-label">配色（ダーク/ライト）</span>
       <label class="toggle-switch">
@@ -682,7 +598,6 @@
         <span class="slider"></span>
       </label>
     </div>
-
     <div class="bottom-links">
       <button class="text-link" onclick="fillDemoData()">デモデータを入力（デモ用）</button>
       <button class="text-link" onclick="clearData()">データをクリア</button>
@@ -690,12 +605,11 @@
   </div>
 </div>
 
-<!-- モーダル：使い方 -->
+<!-- Modal: Help -->
 <div class="modal-overlay" id="modalHelpOverlay">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('modalHelpOverlay')">×</button>
     <h3>使い方ガイド</h3>
-    <!-- 修正済み：絵文字付きの見やすいリスト -->
     <ul class="help-list">
       <li>
         <span class="help-icon">🎯</span>
@@ -725,9 +639,8 @@
 <div id="toast" class="toast">メッセージ</div>
 
 <script>
-  // --- UI State & Elements ---
   let currentMode = 'url';
-  let currentPurpose = 'proposal'; // デフォルト
+  let currentPurpose = 'proposal';
   const STORAGE_KEY = 'asset_app_data_v2'; 
 
   const ui = {
@@ -741,15 +654,14 @@
     outSummary: document.getElementById('outSummary'),
     outTags: document.getElementById('outTags'),
     outAction: document.getElementById('outAction'),
-    aiPrompt: document.getElementById('aiPrompt'),
+    promptBox: document.getElementById('promptBox'), // Dynamic container
     promptTabs: document.querySelectorAll('.p-tab'),
     historySection: document.getElementById('historySection'),
-    historyList: document.getElementById('historyList')
+    historyList: document.getElementById('historyList'),
+    promptHint: document.getElementById('promptHint')
   };
 
-  // --- Core Functions ---
-
-  // Set Purpose
+  // Logic
   window.setPurpose = (purpose) => {
     currentPurpose = purpose;
     ui.purposeChips.forEach(chip => {
@@ -758,210 +670,35 @@
     });
   };
 
-  // Set Input Mode
   window.setMode = (mode) => {
     currentMode = mode;
-    // Update Tab UI
     ui.tabs.forEach((tab, index) => {
       const modes = ['url', 'text', 'memo', 'file'];
       if(modes[index] === mode) tab.classList.add('active');
       else tab.classList.remove('active');
     });
-
-    // Render Input Element
     ui.inputArea.innerHTML = '';
-    
     if(mode === 'file') {
-      const fileArea = document.createElement('div');
-      fileArea.className = 'file-drop-area';
-      fileArea.innerHTML = `
-        <div style="font-size:24px; margin-bottom:8px;">📂</div>
-        <div style="font-weight:bold;">クリックしてファイルを選択</div>
-        <div style="font-size:0.85rem; margin-top:4px; opacity:0.8;">PDF, JPG, PNG 対応</div>
-        <input type="file" id="fileInput" style="display:none;" accept="image/*,.pdf" onchange="handleFileSelect(this)">
-      `;
-      fileArea.onclick = () => document.getElementById('fileInput').click();
-      ui.inputArea.appendChild(fileArea);
+      ui.inputArea.innerHTML = `
+        <div class="file-drop-area" onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:24px; margin-bottom:8px;">📂</div>
+          <div style="font-weight:bold;">クリックしてファイルを選択</div>
+          <div style="font-size:0.85rem; margin-top:4px; opacity:0.8;">PDF, JPG, PNG 対応</div>
+          <input type="file" id="fileInput" style="display:none;" accept="image/*,.pdf" onchange="handleFileSelect(this)">
+        </div>`;
     } else {
       const el = (mode === 'url') ? document.createElement('input') : document.createElement('textarea');
       el.id = 'mainInput';
-      if(mode === 'url') {
-          el.type = 'text';
-          el.placeholder = "例：https://...";
-      } else {
-          el.placeholder = (mode === 'text') ? "議事録や資料のテキストを貼り付け..." : "頭の中のモヤモヤを書き出す...";
-      }
+      if(mode === 'url') { el.type = 'text'; el.placeholder = "例：https://..."; }
+      else { el.placeholder = (mode === 'text') ? "議事録や資料のテキストを貼り付け..." : "頭の中のモヤモヤを書き出す..."; }
       ui.inputArea.appendChild(el);
     }
   };
 
-  // Run Process
-  ui.runBtn.addEventListener('click', () => {
-    const mainInput = document.getElementById('mainInput');
-    const val = mainInput ? mainInput.value.trim() : "";
-    
-    // Validation
-    if(currentMode === 'file' && document.querySelector('.file-drop-area')){
-      showToast("⚠️ ファイルを選択してください");
-      return;
-    }
-    if(currentMode !== 'file' && !val) {
-      showToast("⚠️ 入力が空です");
-      return;
-    }
-
-    // UI Loading State
-    ui.runBtn.disabled = true;
-    ui.runBtn.innerHTML = 'AIが整理＆生成中... <span class="loading-pulse">⏳</span>';
-    
-    // Simulate API Call
-    setTimeout(() => {
-      // Mock Logic based on purpose
-      let summary = "", tags = "", action = "";
-
-      if(currentPurpose === 'proposal') {
-        summary = "【顧客課題】\n・既存システムの老朽化による業務効率低下\n・セキュリティリスクの懸念\n\n【提案の方向性】\n・クラウド移行によるコスト削減と安全性向上\n・段階的な移行プランの提示";
-        tags = "#提案書 #クラウド移行 #DX #セキュリティ";
-        action = "・競合他社の事例をリサーチする\n・概算見積もりを作成する";
-      } else if(currentPurpose === 'minutes') {
-        summary = "【決定事項】\n・A案を採用する方針で合意\n・予算は来期に回す\n\n【課題】\n・納期の遅れが懸念されるため、スケジュール調整が必要";
-        tags = "#議事録 #プロジェクトA #決定事項";
-        action = "・関係者へ共有\n・スケジュール修正案を作成";
-      } else if(currentPurpose === 'library') {
-        summary = "【資料概要】\n2023年度 下期営業報告書\n\n【主要データ】\n・売上推移：前年比120%達成\n・エリア別実績：関東エリアが牽引";
-        tags = "#営業報告書 #2023年度 #売上データ #関東";
-        action = "・社内共有フォルダ「営業資料/2023」へ格納\n・ファイル名を「2023_下期営業報告.pdf」に統一";
-      } else if(currentPurpose === 'manual') {
-        summary = "【業務フロー：請求書発行】\n1. 管理システムにログイン\n2. 受注データを選択\n3. 「請求書発行」ボタンを押下\n4. PDFをダウンロードしてメール送付";
-        tags = "#マニュアル #経理業務 #請求書 #新人教育";
-        action = "・Notionのマニュアルページに追加\n・新人研修のカリキュラムに組み込む";
-      } else if(currentPurpose === 'anonymize') {
-        summary = "【事例紹介（匿名化済み）】\nA社（製造業）におけるDX導入事例\n\n【課題】\n紙帳票による管理の限界\n\n【成果】\nデジタル化により工数を30%削減";
-        tags = "#事例紹介 #製造業 #DX #匿名化";
-        action = "・オウンドメディア記事として公開\n・セミナー資料へ流用";
-      } else if(currentPurpose === 'routine') {
-        summary = "【月次ルーティン：月末処理】\n・勤怠締め作業\n・経費精算の承認\n・請求書の発送確認";
-        tags = "#ルーティン #月末処理 #タスク管理";
-        action = "・カレンダーに繰り返し予定として登録\n・チェックリストを更新";
-      } else if(currentPurpose === 'thought') {
-        summary = "【着想】\n機能訴求から情緒的価値（ベネフィット）訴求への転換\n\n【仮説】\n「時短」という機能性よりも、「家族との時間」という体験価値の方が顧客の心に響くのではないか。\n\n【施策案】\n次期キャンペーンにおけるキャッチコピーのA/Bテスト実施";
-        tags = "#マーケティング #コピーライティング #アイデアメモ #A/Bテスト";
-        action = "・競合他社の情緒的訴求事例を集める\n・新しいキャッチコピー案を30個出す";
-      } else {
-        // Default Summary (Summary)
-        summary = "【結論】\n資料の本質的価値を再定義し、活用可能な状態にする。\n\n【ポイント】\n1. アナログ/デジタルを問わず集約する\n2. 自動タグ付けで「探す時間」をゼロに\n3. 次のアクションを提示し、死蔵を防ぐ";
-        tags = "#業務効率化 #資産管理 #DX #2025年度";
-        action = "・原本をキャビネットのA棚に保管する\n・経理担当に写しを共有する";
-      }
-
-      // Display Results
-      ui.placeholder.classList.add('hidden');
-      ui.outputContent.classList.remove('hidden');
-      
-      ui.outSummary.textContent = summary;
-      ui.outTags.textContent = tags;
-      ui.outAction.textContent = action;
-
-      // Generate Prompt (ChatGPT default)
-      updatePrompt('gpt', summary, tags, action);
-      
-      // Reset UI
-      ui.runBtn.disabled = false;
-      ui.runBtn.innerHTML = '整理して資産にする <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
-      
-      showToast("完了しました！");
-      
-      // Scroll on Mobile
-      if(window.innerWidth < 768) {
-          ui.resultZone.scrollIntoView({ behavior: 'smooth' });
-      }
-
-    }, 1000);
-  });
-
-  // Prompt Switching
-  window.switchPrompt = (aiType) => {
-    // UI Update
-    ui.promptTabs.forEach(t => t.classList.remove('active'));
-    const target = Array.from(ui.promptTabs).find(t => t.getAttribute('onclick').includes(aiType));
-    if(target) target.classList.add('active');
-
-    // Generate
-    const summary = ui.outSummary.textContent;
-    const tags = ui.outTags.textContent;
-    const action = ui.outAction.textContent;
-    updatePrompt(aiType, summary, tags, action);
-  };
-
-  function updatePrompt(aiType, summary, tags, action) {
-    let prompt = "";
-    let purposeText = "";
-    let role = "";
-
-    // 目的別のプロンプト設定
-    if (currentPurpose === 'proposal') {
-        purposeText = "提案書の構成案およびスライドイメージの作成";
-        role = "あなたは優秀なコンサルタントです。";
-    } else if (currentPurpose === 'minutes') {
-        purposeText = "議事録の要約と決定事項の抽出";
-        role = "あなたは優秀な秘書です。";
-    } else if (currentPurpose === 'library') {
-        purposeText = "検索性を高めるためのタグ付けとフォルダ分類案の作成";
-        role = "あなたは情報の整理整頓が得意なライブラリアンです。";
-    } else if (currentPurpose === 'manual') {
-        purposeText = "誰でもわかる業務手順書（マニュアル）の作成";
-        role = "あなたは業務改善のプロフェッショナルです。";
-    } else if (currentPurpose === 'anonymize') {
-        purposeText = "固有名詞を伏せ字にした、外部公開可能な事例記事の作成";
-        role = "あなたは広報・PRの専門家です。";
-    } else if (currentPurpose === 'routine') {
-        purposeText = "月次ルーティンタスクのチェックリスト化";
-        role = "あなたはタスク管理のスペシャリストです。";
-    } else if (currentPurpose === 'thought') {
-        purposeText = "断片的なアイデアの言語化と企画書への落とし込み";
-        role = "あなたはクリエイティブ・ディレクターです。";
-    }
-
-    const content = `【整理された情報】\n${summary}\n\n【補足情報】\n${tags}\n${action}`;
-
-    if(aiType === 'gpt') {
-        prompt = `${role}\n以下の情報を元に、${purposeText}を行ってください。\n\n${content}\n\n出力形式は、実務ですぐに使えるようにMarkdownで見やすく整形してください。`;
-    } else if(aiType === 'gemini') {
-        prompt = `${role}\n次の情報を分析し、${purposeText}をお願いします。\n特に、論理的な整合性と具体性を重視し、表形式などで整理してください。\n\n${content}`;
-    } else if(aiType === 'notebook') {
-        // NotebookLM specific logic for visual/slide/infographic generation
-        let visualInstruction = "";
-        
-        if (currentPurpose === 'proposal') {
-            visualInstruction = "【スライド構成案】\nこの内容を元に、10枚程度のスライド資料構成を作成してください。\n各スライドについて、掲載すべき「グラフ」や「インフォグラフィック」のアイデアも具体的に記述してください。";
-        } else if (currentPurpose === 'minutes') {
-            visualInstruction = "【可視化の提案】\n議論の流れや決定事項の因果関係を整理し、フローチャートやタイムラインとして可視化するための構成案を提示してください。";
-        } else if (currentPurpose === 'library') {
-            visualInstruction = "【マップ化】\nこれらの資料群を体系的に整理するための「知識マップ」や「カテゴリ相関図」の構成案を作成してください。";
-        } else if (currentPurpose === 'manual') {
-            visualInstruction = "【図解のポイント】\n手順の中で特に複雑な部分を特定し、それを分かりやすく伝えるための図解（フロー図や構造図）のラフ案を言葉で説明してください。";
-        } else if (currentPurpose === 'anonymize') {
-            visualInstruction = "【事例スライド】\nこの導入事例を1枚のスライドにまとめるための構成案を作成してください。\n特に「Before/After」の成果を強調するインフォグラフィックの案を含めてください。";
-        } else if (currentPurpose === 'routine') {
-            visualInstruction = "【サイクル図】\nこのルーティンワーク全体を1つのサイクル図として表現するための要素と流れを定義してください。";
-        } else if (currentPurpose === 'thought') {
-            visualInstruction = "【コンセプト図】\nこのアイデアの核となる価値を一枚絵（コンセプトマップ）で表現するための構成要素と言語化を行ってください。";
-        }
-
-        prompt = `（ソースとしてこのテキストを保存してください）\n\nテーマ：${purposeText}\n\n${content}\n\n-------------------\n\n${visualInstruction}\n\nまた、上記に基づき、聞き手が直感的に理解できるような解説をお願いします。`;
-    }
-
-    ui.aiPrompt.value = prompt;
-  }
-
-  // --- Helper Functions ---
-
   window.handleFileSelect = (input) => {
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      const area = document.querySelector('.file-drop-area');
-      area.innerHTML = `<div class="loading-pulse">📂 解析中...</div>`;
-      
+      ui.inputArea.innerHTML = `<div class="file-drop-area"><div class="loading-pulse">📂 解析中...</div></div>`;
       setTimeout(() => {
         ui.inputArea.innerHTML = '';
         const textarea = document.createElement('textarea');
@@ -973,40 +710,141 @@
     }
   };
 
+  ui.runBtn.addEventListener('click', () => {
+    const mainInput = document.getElementById('mainInput');
+    const val = mainInput ? mainInput.value.trim() : "";
+    if(currentMode === 'file' && document.querySelector('.file-drop-area')){ showToast("⚠️ ファイルを選択してください"); return; }
+    if(currentMode !== 'file' && !val) { showToast("⚠️ 入力が空です"); return; }
+
+    ui.runBtn.disabled = true;
+    ui.runBtn.innerHTML = 'AIが整理＆生成中... <span class="loading-pulse">⏳</span>';
+    
+    setTimeout(() => {
+      let summary="", tags="", action="";
+      if(currentPurpose==='proposal'){
+          summary="【課題】\n・若手社員の早期離職が増加傾向\n・メンター不足によるフォロー体制の不備\n【提案】\n・メンター制度の導入による定着率向上\n・月5万円/人の予算で外部メンターを活用";
+          tags="#人材定着 #メンター制度 #若手育成 #採用コスト削減"; action="・メンター研修会社の比較検討\n・導入スケジュールの策定";
+      } else if(currentPurpose==='minutes'){
+          summary="【決定事項】\n・採用基準の見直し（ポテンシャル重視へ）\n・リファラル採用の報奨金アップ\n【課題】\n・面接官のスキル平準化";
+          tags="#採用会議 #リファラル採用 #面接官トレーニング"; action="・評価シートの改定\n・全社員へリファラル制度の周知";
+      } else if(currentPurpose==='library'){
+          summary="【資料】2023年度 新卒採用活動報告書\n【データ】エントリー数：500名（前年比110%）\n【課題】内定辞退率の改善";
+          tags="#採用報告 #新卒採用 #2023年度 #内定辞退防止"; action="・共有フォルダへ格納\n・次年度計画への反映";
+      } else if(currentPurpose==='manual'){
+          summary="【手順：新人オンボーディング】\n1. 入社1週間前：PC手配、アカウント発行、ウェルカムメール送付\n2. 入社当日：オリエンテーション、セキュリティ研修、歓迎ランチ\n3. 入社1週間後：メンターとの振り返り面談";
+          tags="#マニュアル #新人受入 #オンボーディング #総務"; action="・チェックリストの更新\n・メンターへの事前共有";
+      } else if(currentPurpose==='anonymize'){
+          summary="【事例（匿名）】\nB社（サービス業）における離職率改善事例。\n1on1ミーティングの導入で離職率が15%→5%へ改善。";
+          tags="#事例 #サービス業 #離職率改善 #1on1"; action="・採用広報記事として公開\n・ホワイトペーパー化";
+      } else if(currentPurpose==='routine'){
+          summary="【月次ルーティン：人材管理】\n・勤怠状況の確認（残業過多チェック）\n・1on1実施状況の確認\n・衛生委員会への報告作成";
+          tags="#ルーティン #労務管理 #1on1 #コンプライアンス"; action="・カレンダー登録\n・管理職へのアラートメール設定";
+      } else if(currentPurpose==='thought'){
+          summary="【着想】採用もマーケティング視点で考える\n【仮説】「条件」より「カルチャー」への共感が定着のカギでは？\n【施策】社員インタビュー動画をSNSで発信";
+          tags="#採用マーケティング #カルチャーマッチ #SNS採用"; action="・出演してくれる社員の選定\n・動画の構成案作成";
+      }
+
+      ui.placeholder.classList.add('hidden');
+      ui.outputContent.classList.remove('hidden');
+      ui.outSummary.textContent = summary;
+      ui.outTags.textContent = tags;
+      ui.outAction.textContent = action;
+      
+      // Default to ChatGPT prompt
+      switchPrompt('gpt'); 
+      
+      ui.runBtn.disabled = false;
+      ui.runBtn.innerHTML = '整理して資産にする <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+      showToast("完了しました！");
+      if(window.innerWidth < 768) ui.resultZone.scrollIntoView({ behavior: 'smooth' });
+    }, 1000);
+  });
+
+  window.switchPrompt = (aiType) => {
+    ui.promptTabs.forEach(t => t.classList.remove('active'));
+    Array.from(ui.promptTabs).find(t => t.getAttribute('onclick').includes(aiType)).classList.add('active');
+    
+    const summary = ui.outSummary.textContent;
+    const tags = ui.outTags.textContent;
+    const action = ui.outAction.textContent;
+
+    let purposeText="", role="";
+    if(currentPurpose==='proposal'){ purposeText="提案書の構成案作成"; role="コンサルタント"; }
+    else if(currentPurpose==='minutes'){ purposeText="議事録の要約"; role="秘書"; }
+    else if(currentPurpose==='library'){ purposeText="検索性向上のためのタグ付け"; role="ライブラリアン"; }
+    else if(currentPurpose==='manual'){ purposeText="業務手順書の作成"; role="業務改善プロ"; }
+    else if(currentPurpose==='anonymize'){ purposeText="匿名化事例記事の作成"; role="広報担当"; }
+    else if(currentPurpose==='routine'){ purposeText="ルーティンタスク管理"; role="タスク管理専門家"; }
+    else if(currentPurpose==='thought'){ purposeText="アイデアの具体化"; role="プランナー"; }
+
+    const content = `【整理された情報】\n${summary}\n\n【補足情報】\n${tags}\n${action}`;
+    const plainTextInst = "\n\n【重要】出力形式について：\nマークダウン記法（太字、見出し等）は一切使用せず、メールやチャットにそのまま貼り付けられるプレーンテキスト形式で出力してください。";
+
+    // Dynamic UI Switching
+    if (aiType === 'notebook') {
+        ui.promptHint.textContent = "👆 上のソースをNotebookLMに読み込ませた後、下のプロンプトをチャットに入力してください。";
+        
+        // Define specific prompts for notebook
+        let infographicPrompt = "このソースの内容を元に、情報を視覚的に伝えるためのインフォグラフィック案を作成してください。\nどのような図形、矢印、配置を用いるべきか、具体的な構成要素とデザインの指示を言語化してください。";
+        let slidePrompt = "このソースの内容を元に、プレゼンテーション用のスライド構成案（10枚程度）を作成してください。\n各スライドのタイトル、箇条書きの要点、および推奨される図解イメージを提示してください。";
+        
+        if(currentPurpose === 'proposal') {
+             infographicPrompt = "提案の要点（課題→解決策→効果）を一目で理解できる「Before/After比較図」または「プロセスフロー図」の構成案を作成してください。";
+             slidePrompt = "提案書の全体構成案（表紙、背景、課題、解決策、スケジュール、体制、予算）を作成し、各スライドで強調すべきメッセージを定義してください。";
+        } else if (currentPurpose === 'manual') {
+             infographicPrompt = "この業務手順の全体像を把握するための「フローチャート」の構成案を作成してください。分岐点や注意点が明確になるようにしてください。";
+             slidePrompt = "新人研修用のスライド構成を作成してください。各ステップを1スライドに分割し、画面キャプチャを貼るべき位置などを指示してください。";
+        }
+
+        ui.promptBox.innerHTML = `
+            <div style="margin-bottom:15px;">
+              <div class="prompt-sub-header">
+                <span>🎨 インフォグラフィック作成用</span>
+                <button class="copy-mini-btn" onclick="copyText('promptInfo')">コピー</button>
+              </div>
+              <textarea id="promptInfo" class="prompt-text" style="min-height:80px;" readonly>${infographicPrompt}</textarea>
+            </div>
+            <div>
+              <div class="prompt-sub-header">
+                <span>📊 スライド資料構成用</span>
+                <button class="copy-mini-btn" onclick="copyText('promptSlide')">コピー</button>
+              </div>
+              <textarea id="promptSlide" class="prompt-text" style="min-height:80px;" readonly>${slidePrompt}</textarea>
+            </div>
+        `;
+
+    } else {
+        // Standard GPT/Gemini layout
+        ui.promptHint.textContent = "👆 これをコピーして、各AIに貼り付けるだけで作業が完了します。";
+        let prompt = `あなたは優秀な${role}です。\n以下の情報を元に、${purposeText}を行ってください。\n\n${content}${plainTextInst}`;
+        
+        ui.promptBox.innerHTML = `
+            <textarea id="aiPrompt" class="prompt-text" readonly>${prompt}</textarea>
+            <div class="action-row">
+                <button class="btn-sm" onclick="copyText('aiPrompt')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    コピー
+                </button>
+            </div>
+        `;
+    }
+  };
+
+  // Demo & Utils
   window.fillDemoData = () => {
     setMode('text');
     const el = document.getElementById('mainInput');
+    // Set appropriate demo text based on currentPurpose (Focused on HR/Recruiting)
+    if(currentPurpose==='proposal') el.value = `【社内提案メモ】\n・課題：若手社員の離職率が高い（入社3年以内で30%）\n・原因：悩み相談できる相手がいない、キャリアパスが見えない\n・提案：メンター制度の導入、定期的な1on1の実施\n・予算：メンター手当、研修費で月5万円/人`;
+    else if(currentPurpose==='minutes') el.value = `【採用定例会議】\n日時：2024/10/20\n・今年度の採用目標：5名（未達）\n・応募数はあるが、マッチする人材が少ない\n・面接官による評価のバラつきが課題\n・次の一手：リファラル採用の強化、評価シートの刷新`;
+    else if(currentPurpose==='manual') el.value = `【新人受け入れ（オンボーディング）手順】\n1. 入社1週間前：PC手配、アカウント発行、ウェルカムメール送付\n2. 入社当日：オリエンテーション、セキュリティ研修、歓迎ランチ\n3. 入社1週間後：メンターとの振り返り面談`;
+    else if(currentPurpose==='recruit') el.value = `【求める人物像】\n・未経験歓迎、意欲重視\n・チームワークを大切にできる人\n・将来のリーダー候補\n【自社の魅力】\n・充実した研修制度\n・アットホームな社風\n・資格取得支援あり`;
+    else if(currentPurpose==='thought') el.value = `【採用のアイデア】\n「スキル」で募集するんじゃなくて、「価値観」で募集したらどうだろう？\n「何ができるか」より「何を実現したいか」\nミッションへの共感を軸にした採用ページを作る。`;
+    else el.value = `【デモデータ】\nこれは${ui.purposeChips[Array.from(ui.purposeChips).findIndex(c=>c.classList.contains('active'))].innerText.trim()}用のサンプルです。`;
     
-    // 選択中の目的ごとのデモデータ
-    if (currentPurpose === 'proposal') {
-        el.value = `【クライアントヒアリングメモ】\n・クライアント：株式会社〇〇（製造業）\n・課題感：社内のナレッジが属人化しており、技術伝承が進まない\n・要望：タブレットで現場で見れる動画マニュアル\n・予算：300万程度`;
-    } else if (currentPurpose === 'minutes') {
-        el.value = `【会議メモ】\n日時：2024/10/20\n参加者：佐藤、鈴木、田中\n・A案を採用する方向で決定\n・ただし予算オーバーの懸念あり\n・来週までに再見積もりが必要`;
-    } else if (currentPurpose === 'library') {
-        el.value = `【資料内容】\n2023年度の営業報告書一式\nPDFファイルが散乱している状態\n・上期報告書\n・下期報告書\n・エリア別データ`;
-    } else if (currentPurpose === 'manual') {
-        el.value = `【請求書発行の手順メモ】\n管理画面にログインして、受注一覧から対象を選ぶ。\n請求書発行ボタンを押す。\nPDFができるのでダウンロードしてメールで送る。\n宛先は経理担当者。`;
-    } else if (currentPurpose === 'anonymize') {
-        el.value = `【A社導入事例】\n株式会社テックサプライ（代表：山田太郎）での導入事例。\n課題は在庫管理のミス。\nシステム導入でミスがゼロになった。\n担当の佐藤氏「非常に助かっています」`;
-    } else if (currentPurpose === 'routine') {
-        el.value = `【月末のやることリスト】\n・勤怠の締め\n・経費精算\n・請求書の確認\n・翌月の目標設定\nこれらを毎月忘れないようにしたい`;
-    } else if (currentPurpose === 'thought') {
-        el.value = `【ふと思いついたことメモ】\n電車の中で広告を見て思った。\nうちの商品のキャッチコピー、「機能」ばかり推してるけど、「どんな体験ができるか」に変えたほうが響くんじゃないか？\n例えば「時短」じゃなくて「家族との時間が増える」みたいな。\n次のキャンペーンで試してみたい。`;
-    }
-
-    showToast(`デモデータ（${ui.purposeChips[Array.from(ui.purposeChips).findIndex(c => c.classList.contains('active'))].innerText.trim()}用）を入力しました`);
+    showToast("デモデータを入力しました");
     closeModal('modalSettingsOverlay');
-    // Auto run after short delay
     setTimeout(()=> ui.runBtn.click(), 500);
-  };
-
-  window.resetApp = () => {
-    setPurpose('proposal');
-    setMode('url');
-    ui.outputContent.classList.add('hidden');
-    ui.placeholder.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    showToast("リセットしました");
   };
 
   window.copyText = (id) => {
@@ -1014,91 +852,40 @@
     const text = (el.tagName === 'TEXTAREA') ? el.value : el.textContent;
     fallbackCopy(text);
   };
-
   window.copyAllText = () => {
     const summary = ui.outSummary.textContent;
     const tags = ui.outTags.textContent;
     const action = ui.outAction.textContent;
-    const prompt = ui.aiPrompt.value;
+    const promptText = ui.promptBox.querySelector('textarea')?.value || "（NotebookLM用プロンプトは別途コピーしてください）";
     
-    const text = `【整理された資産】\n\n■要約\n${summary}\n\n■分類\n${tags}\n\n■アクション\n${action}\n\n-------------------\n■AIプロンプト\n${prompt}`;
+    const text = `【整理された資産】\n\n■要約\n${summary}\n\n■分類\n${tags}\n\n■アクション\n${action}\n\n-------------------\n■AIプロンプト\n${promptText}`;
     fallbackCopy(text);
   };
-
   function fallbackCopy(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      showToast("コピーしました！");
-    } catch (err) {
-      showToast("コピーに失敗しました");
-    }
-    document.body.removeChild(textArea);
+    const ta = document.createElement("textarea"); ta.value = text;
+    ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta);
+    ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    showToast("コピーしました！");
   }
-
   function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = "toast show";
+    const t = document.getElementById("toast"); t.textContent = msg; t.className = "toast show";
     setTimeout(() => t.className = t.className.replace("show", ""), 3000);
   }
-
-  // LocalStorage & Download (Simplified)
   window.saveToLocal = () => {
-      const item = {
-          date: new Date().toLocaleString(),
-          summary: ui.outSummary.textContent.substring(0, 30) + "..."
-      };
-      // Save logic here (mock)
-      ui.historySection.classList.remove('hidden');
-      const div = document.createElement('div');
-      div.className = 'history-item';
-      div.innerHTML = `<div style="font-size:0.8rem; color:#666;">${item.date}</div><div>${item.summary}</div>`;
-      ui.historyList.prepend(div);
-      showToast("履歴に保存しました");
+    // Save logic mock
+    ui.historySection.classList.remove('hidden');
+    const div = document.createElement('div'); div.className = 'history-item';
+    div.innerHTML = `<div style="font-size:0.8rem; color:#666;">${new Date().toLocaleString()}</div><div>${ui.outSummary.textContent.substring(0,20)}...</div>`;
+    ui.historyList.prepend(div);
+    showToast("履歴に保存しました");
   };
-  
-  window.downloadAsText = () => {
-      showToast("テキストファイルをダウンロードしました");
-  };
-  
-  window.shareAsset = () => {
-      showToast("共有メニューを開きます");
-  };
-
-  window.clearData = () => {
-    setMode('url');
-    ui.outputContent.classList.add('hidden');
-    ui.placeholder.classList.remove('hidden');
-    closeModal('modalSettingsOverlay');
-    showToast("クリアしました");
-  };
-
-  // Modal Controls
-  window.openModal = (id) => {
-    document.getElementById(id).classList.add('open');
-  };
-  window.closeModal = (id) => {
-    document.getElementById(id).classList.remove('open');
-  };
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => {
-      if(e.target === overlay) overlay.classList.remove('open');
-    });
-  });
-  
-  // Theme Toggle
-  document.getElementById('themeToggle').addEventListener('change', (e) => {
-    if(e.target.checked) document.body.setAttribute('data-theme', 'dark');
-    else document.body.removeAttribute('data-theme');
-  });
-
+  window.downloadAsText = () => showToast("テキストファイルをダウンロードしました");
+  window.shareAsset = () => showToast("共有メニューを開きます");
+  window.clearData = () => { setMode('url'); ui.outputContent.classList.add('hidden'); ui.placeholder.classList.remove('hidden'); closeModal('modalSettingsOverlay'); showToast("クリアしました"); };
+  window.openModal = (id) => document.getElementById(id).classList.add('open');
+  window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+  document.getElementById('themeToggle').addEventListener('change', e => { if(e.target.checked) document.body.setAttribute('data-theme', 'dark'); else document.body.removeAttribute('data-theme'); });
 </script>
 </body>
 </html>
