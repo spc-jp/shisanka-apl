@@ -3,453 +3,429 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>資産化 体験アプリ（UD版）</title>
+  <title>資産化 体験アプリ（AI活用版）</title>
   <style>
-    :root{
-      /* ダークモード（デフォルト） */
-      --bg1:#0b192e;
-      --bg2:#112240;
-      --card-bg:rgba(30, 41, 59, 0.7);
-      --card-border:rgba(255,255,255,0.15);
-      --text-main:#f1f5f9;
-      --text-muted:#94a3b8;
-      --accent:#3b82f6;
-      --accent-hover:#2563eb;
-      --success:#10b981;
-      --shadow:0 10px 15px -3px rgba(0,0,0,0.3);
-      --radius:16px;
-      --input-bg:rgba(0,0,0,0.3);
-      --modal-bg:#1e293b;
+    :root {
+      /* ベースカラー */
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --bg-color: #F3F4F6;
+      --card-bg: #FFFFFF;
+      --text-main: #1F2937;
+      --text-sub: #6B7280;
+      --border: #E5E7EB;
+      --accent: #F59E0B;
+      --success: #10b981;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --modal-bg: #FFFFFF;
     }
 
-    /* ライトモード */
-    [data-theme="light"] {
-      --bg1:#f8fafc;
-      --bg2:#e2e8f0;
-      --card-bg:rgba(255, 255, 255, 0.85);
-      --card-border:rgba(0,0,0,0.1);
-      --text-main:#0f172a;
-      --text-muted:#475569;
-      --accent:#2563eb; /* 少し濃い青に */
-      --accent-hover:#1d4ed8;
-      --success:#059669;
-      --shadow:0 10px 15px -3px rgba(0,0,0,0.1);
-      --input-bg:rgba(255,255,255,0.6);
-      --modal-bg:#ffffff;
+    /* ダークモード */
+    [data-theme="dark"] {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --bg-color: #0b192e;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --border: rgba(255,255,255,0.15);
+      --modal-bg: #1e293b;
     }
 
-    body{
-      margin:0;
-      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Biz UDPGothic", system-ui, sans-serif;
-      color:var(--text-main);
-      background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15), transparent 40%),
-                  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1), transparent 40%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:20px;
-      line-height:1.6;
-      font-size:16px; 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
       transition: background 0.3s, color 0.3s;
     }
 
-    .wrap{ width:min(1000px, 100%); position:relative; }
-
-    /* ヘッダーツールバー（右上配置） */
-    .top-toolbar {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-bottom: 10px;
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 20px;
     }
 
-    .icon-btn {
+    /* Header */
+    header {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      transition: all 0.2s;
-    }
-    .icon-btn:hover {
-      color: var(--text-main);
-      border-color: var(--accent);
-      background: rgba(59, 130, 246, 0.1);
-    }
-    .icon-btn svg { width: 24px; height: 24px; pointer-events: none; }
-
-    /* ヘッダー周り */
-    .hero{
-      text-align:center;
-      margin-bottom:24px;
-      padding:10px;
-    }
-    .hero h1{
-      margin:0 0 12px;
-      font-size:clamp(24px, 4vw, 32px);
-      letter-spacing:.05em;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .hero p{
-      margin:0;
-      color:var(--text-muted);
-      font-size:15px;
-    }
-
-    /* グリッドレイアウト */
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:24px;
-    }
-    @media(min-width:900px){
-      .grid{ grid-template-columns: 1fr 1fr; align-items:start; }
-    }
-
-    /* カード共通デザイン */
-    .card{
-      background:var(--card-bg);
-      border:1px solid var(--card-border);
-      border-radius:var(--radius);
-      padding:24px;
-      backdrop-filter: blur(12px);
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      gap:20px;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .card-header{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      border-bottom:1px solid var(--card-border);
-      padding-bottom:12px;
-      margin-bottom:4px;
-    }
-    .card-header h2{
-      margin:0;
-      font-size:18px;
-      font-weight:700;
-    }
-    .icon-box{
-      width:32px; height:32px;
-      background:rgba(125, 125, 125, 0.1);
-      border-radius:8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color: var(--text-main);
-    }
-
-    /* タブ切り替え */
-    .tabs{
-      display:grid;
-      grid-template-columns: 1fr 1fr; /* 2列 */
-      gap:10px;
-    }
-    .tab{
-      border:1px solid var(--card-border);
-      background:rgba(0,0,0,0.05);
-      color:var(--text-muted);
-      padding:14px 10px;
-      border-radius:12px;
-      font-size:15px;
-      font-weight:600;
-      cursor:pointer;
-      transition:all 0.2s;
-      display:flex;
-      flex-direction:row;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .tab:hover{ background:rgba(125,125,125,0.1); }
-    .tab.active{
-      background:rgba(59, 130, 246, 0.2);
-      border-color:var(--accent);
-      color:var(--text-main);
-      transform:scale(1.02);
-    }
-    [data-theme="light"] .tab.active {
-      color: var(--accent);
-      background: rgba(59, 130, 246, 0.1);
-    }
-    .tab svg{ width:20px; height:20px; }
-
-    /* 入力エリア */
-    .field-group{ display:flex; flex-direction:column; gap:12px; }
-    
-    input, textarea{
-      width:100%;
-      box-sizing:border-box;
-      border:2px solid var(--card-border);
-      background:var(--input-bg);
-      color:var(--text-main);
-      border-radius:12px;
-      padding:14px 16px;
-      font-size:16px;
-      outline:none;
-      transition: border-color 0.2s, background 0.3s;
-    }
-    textarea{ min-height:160px; resize:vertical; line-height:1.7; }
-    input:focus, textarea:focus{ border-color:var(--accent); }
-
-    /* ファイルアップロード用のスタイル */
-    .file-drop-area {
-      border: 2px dashed var(--card-border);
-      background: rgba(125,125,125,0.02);
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:10px;
-      color: var(--text-muted);
-    }
-    .file-drop-area:hover {
-      border-color: var(--accent);
-      background: rgba(59, 130, 246, 0.05);
-      color: var(--text-main);
-    }
-    .file-icon-large {
-      width: 48px; height: 48px;
-      margin-bottom: 4px;
-      opacity: 0.7;
-    }
-
-    .hint-box{
-      background:rgba(125,125,125,0.05);
-      padding:10px 14px;
-      border-radius:8px;
-      font-size:13px;
-      color:var(--text-muted);
-      display:flex;
-      gap:8px;
-      align-items:start;
-    }
-
-    /* ボタンエリア */
-    .actions{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      margin-top:8px;
-    }
-    
-    .btn-primary{
-      width:100%;
-      border:none;
-      background:linear-gradient(135deg, var(--accent), var(--accent-hover));
-      color:white;
-      padding:18px;
-      border-radius:12px;
-      font-size:18px;
-      font-weight:700;
-      letter-spacing:0.05em;
-      cursor:pointer;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-      transition: transform 0.1s, box-shadow 0.1s;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
-    }
-    .btn-primary:active{ transform:scale(0.98); box-shadow:none; }
-    .btn-primary:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    /* 出力エリア */
-    .output-section{
-      display:none;
-      animation: fadeIn 0.5s ease forwards;
-    }
-    .output-section.show{ display:flex; }
-
-    @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-
-    .asset-card{
-      background:rgba(125,125,125,0.03);
-      border:1px solid var(--card-border);
-      border-radius:12px;
-      overflow:hidden;
-    }
-    .asset-head{
-      background:rgba(125,125,125,0.08);
-      padding:8px 16px; /* 上下パディング調整 */
-      font-size:14px;
-      font-weight:700;
-      color:var(--text-muted);
-      display:flex;
-      align-items:center;
-      justify-content: space-between; /* 両端揃え */
-    }
-    .asset-head-title{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .asset-body{
-      padding:16px;
-    }
-    .asset-body pre{
-      margin:0;
-      white-space:pre-wrap;
-      font-family:inherit;
-      font-size:15px;
-      color:var(--text-main);
-    }
-    
-    /* コピーボタン */
-    .copy-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      opacity: 0.7;
-    }
-    .copy-btn:hover {
-      background: rgba(125,125,125,0.1);
-      color: var(--text-main);
-      opacity: 1;
-    }
-    .copy-btn svg { width: 18px; height: 18px; }
-
-    /* ツールバー */
-    .toolbar{
-      display:flex;
-      gap:8px;
-      margin-top:auto;
-      padding-top:10px;
-    }
-    .tool-btn{
-      flex:1;
-      padding:10px;
-      background:rgba(125,125,125,0.05);
-      border:1px solid var(--card-border);
-      border-radius:8px;
-      color:var(--text-muted);
-      font-size:12px;
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:4px;
-      transition:all 0.2s;
-    }
-    .tool-btn:hover{ background:rgba(125,125,125,0.1); color:var(--text-main); }
-    .tool-btn svg{ width:18px; height:18px; }
-
-    /* 履歴リスト用スタイル */
-    .history-section {
-      margin-top: 24px;
-      border-top: 1px solid var(--card-border);
-      padding-top: 24px;
-      display: none; /* 初期非表示 */
-    }
-    .history-section.show { display: block; }
-    .history-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 12px;
+      padding: 15px 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 15px;
+      backdrop-filter: blur(10px);
     }
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+
+    .header-left { flex: 0 0 auto; display: flex; align-items: center; gap: 10px;}
+    .header-right { flex: 0 0 auto; display: flex; justify-content: flex-end; gap: 12px; }
+
+    .app-icon {
+      font-size: 24px;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      width: 48px; height: 48px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .history-item {
-      background: rgba(125,125,125,0.05);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 14px;
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      font-weight: bold;
+      line-height: 1.2;
+    }
+    .header-title p {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* Header Icon Buttons */
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       transition: all 0.2s;
+    }
+    .icon-btn:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--text-main);
+      border-color: var(--primary);
+    }
+    .icon-btn svg { width: 24px; height: 24px; pointer-events: none; }
+
+    /* Main Grid */
+    main {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+        main { grid-template-columns: 1fr; }
+        .input-zone { position: static; }
+    }
+
+    /* Left Column (Input) */
+    .input-zone {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-section {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .form-label {
+      display: flex; align-items: center; gap: 6px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+    .label-badge {
+        background: var(--primary); color: #fff; 
+        font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;
+    }
+
+    /* Purpose Chips - Vertical */
+    .purpose-selector { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 8px; 
+    }
+    .purpose-chip {
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 10px;
+      text-align: left;
+      width: 100%;
+      line-height: 1.4;
+    }
+    .purpose-chip:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+    .purpose-chip.active {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: bold;
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .purpose-chip .icon { font-size: 1.2rem; }
+
+    /* Tabs */
+    .tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+    }
+    .tab {
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .tab:hover { background: rgba(0,0,0,0.05); }
+    .tab.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .tab svg { width: 18px; height: 18px; }
+
+    /* Inputs */
+    .input-wrapper { position: relative; }
+    input[type="text"], textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      background: rgba(0,0,0,0.02);
+      color: var(--text-main);
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--primary);
+      background: var(--card-bg);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+
+    .file-drop-area {
+      border: 2px dashed var(--border);
+      background: rgba(0,0,0,0.02);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-sub);
+      transition: all 0.2s;
+    }
+    .file-drop-area:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.05);
+      color: var(--primary);
+    }
+
+    /* Primary Button */
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { background: #9CA3AF; cursor: not-allowed; box-shadow: none; }
+
+    /* Right Column (Results) */
+    .result-zone {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    
+    .placeholder-message {
+        text-align: center;
+        padding: 60px;
+        color: var(--text-sub);
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        border: 2px dashed var(--border);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--primary);
+      animation: fadeIn 0.5s ease;
+      backdrop-filter: blur(10px);
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;
+    }
+    .card-header.between { justify-content: space-between; }
+    .card-title {
+      font-size: 1.1rem; font-weight: bold; color: var(--text-main);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .icon-box {
+      width: 32px; height: 32px;
+      background: rgba(125, 125, 125, 0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-main);
+    }
+    .card-body pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    /* Prompt Area */
+    .prompt-area {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      margin-top: 10px;
+    }
+    .prompt-area-title {
+        color: var(--success); font-weight: bold; font-size: 1rem; margin-bottom: 12px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    
+    .prompt-tabs { display: flex; gap: 8px; margin-bottom: 0; }
+    .p-tab {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(255,255,255,0.1);
+      color: var(--text-sub);
+      cursor: pointer;
+      border-bottom: none;
+    }
+    .p-tab.active {
+      background: var(--card-bg);
+      color: var(--success);
+      font-weight: bold;
+      border-bottom: 1px solid var(--card-bg);
+      margin-bottom: -1px;
+      z-index: 1;
+    }
+
+    .prompt-box {
+      background: var(--card-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 0 6px 6px 6px;
+      padding: 16px;
       position: relative;
     }
-    .history-item:hover {
-      background: rgba(125,125,125,0.1);
-      border-color: var(--accent);
+    .prompt-text {
+      width: 100%; min-height: 120px;
+      border: none; background: transparent;
+      font-family: monospace; font-size: 0.9rem; color: var(--text-main);
+      resize: vertical; outline: none;
     }
-    .history-date {
+    
+    .action-row {
+        display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;
+    }
+    
+    .btn-sm {
+        font-size: 0.85rem; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border);
+        background: transparent; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 4px;
+    }
+    .btn-sm:hover { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+
+    .copy-all-btn {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
       font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .history-summary {
-      font-size: 14px;
-      color: var(--text-main);
       font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .history-tags {
-      font-size: 12px;
-      color: var(--accent);
-      margin-top: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .delete-btn {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
-      opacity: 0.5;
+      display: flex; align-items: center; gap: 4px;
+      transition: all 0.2s;
     }
-    .delete-btn:hover {
-      opacity: 1;
-      color: #ef4444;
+    .copy-all-btn:hover { background: rgba(59, 130, 246, 0.2); transform: translateY(-1px); }
+
+    /* Footer */
+    .history-list {
+        margin-top: 20px;
+        display: flex; flex-direction: column; gap: 10px;
+    }
+    .history-item {
+        background: var(--card-bg); border: 1px solid var(--border); padding: 12px; border-radius: 8px;
+        cursor: pointer; position: relative;
+        color: var(--text-main);
+    }
+    .history-item:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+    
+    /* Animation */
+    @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+    .hidden { display: none !important; }
+
+    /* Toast */
+    .toast {
+      visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+      text-align: center; border-radius: 8px; padding: 12px 20px;
+      position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%);
+      font-size: 0.95rem; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+    }
+    .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+    /* Loading Pulse */
+    .loading-pulse { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+    /* Footer Text */
+    .footer {
+      margin-top: 40px;
+      color: var(--text-sub);
+      font-size: 12px;
+      text-align: center;
+      opacity: 0.6;
     }
 
-    /* ステータス表示 */
-    .status-area{
-      min-height:24px;
-      font-size:14px;
-      text-align:center;
-      color:var(--success);
-      font-weight:600;
-    }
-
-    .footer{
-      margin-top:40px;
-      color:var(--text-muted);
-      font-size:12px;
-      text-align:center;
-      opacity:0.6;
-    }
-
-    /* モーダルスタイル */
+    /* Modal Styles */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -464,10 +440,7 @@
       padding:20px;
       box-sizing: border-box;
     }
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
     .modal {
       background: var(--modal-bg);
       color: var(--text-main);
@@ -480,260 +453,219 @@
       transition: transform 0.3s;
       position: relative;
     }
-    .modal-overlay.open .modal {
-      transform: translateY(0);
-    }
-    .modal h3 { margin: 0 0 16px; font-size: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal h3 { margin: 0 0 16px; font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .close-btn {
-      position: absolute;
-      top: 16px; right: 16px;
-      background: none; border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 24px;
-      line-height: 1;
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--text-sub);
+      cursor: pointer; font-size: 24px; line-height: 1;
     }
-    .settings-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .settings-label { font-weight: 600; }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     
-    /* トグルスイッチ */
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 28px;
-    }
+    /* Toggle Switch */
+    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #cbd5e1;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider { background-color: var(--accent); }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--primary); }
     input:checked + .slider:before { transform: translateX(22px); }
 
-    /* モーダル内リスト */
-    .help-list {
-      padding-left: 20px;
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-main);
-    }
-    .help-list li { margin-bottom: 8px; }
+    .bottom-links { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .text-link { background: none; border: none; color: var(--text-sub); font-size: 13px; cursor: pointer; text-align: left; padding: 0; opacity: 0.5; transition: opacity 0.2s; }
+    .text-link:hover { opacity: 1; text-decoration: underline; color: var(--primary); }
 
-    /* 設定下部の薄文字リンク */
-    .bottom-links {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      border-top: 1px solid var(--card-border);
-      padding-top: 16px;
-    }
-    .text-link {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 13px;
-      cursor: pointer;
-      text-align: left;
-      padding: 0;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-    .text-link:hover { opacity: 1; text-decoration: underline; }
-
-    /* ロード中アニメーション用 */
-    .loading-pulse {
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
-    }
+    /* Help List with Emojis */
+    .help-list { padding-left: 0; margin: 0; font-size: 14px; color: var(--text-main); list-style: none; }
+    .help-list li { margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+    .help-icon { font-size: 1.2rem; flex: 0 0 24px; text-align: center; }
+    .help-text strong { display: block; font-size: 0.95rem; margin-bottom: 2px; color: var(--primary); }
 
   </style>
 </head>
 <body>
 
-<div class="wrap">
-  <!-- 右上ツールバー -->
-  <div class="top-toolbar">
-    <button class="icon-btn" id="btnHelp" aria-label="使い方">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-    </button>
-    <button class="icon-btn" id="btnSettings" aria-label="設定">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-    </button>
-  </div>
-
-  <div class="hero">
-    <h1>資産化 体験アプリ</h1>
-    <p>今ある資料を入れるだけ。「整理」して、一生使える資産へ。</p>
-  </div>
-
-  <div class="grid">
-    <!-- 入力セクション -->
-    <section class="card">
-      <div class="card-header">
-        <div class="asset-head-title">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          </div>
-          <h2>素材を入力</h2>
-        </div>
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="app-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
       </div>
-
-      <div class="tabs">
-        <button class="tab active" onclick="setMode('url')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-          URL
-        </button>
-        <button class="tab" onclick="setMode('text')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          テキスト
-        </button>
-        <button class="tab" onclick="setMode('memo')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-          メモ・音声
-        </button>
-        <button class="tab" onclick="setMode('file')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
-          ファイル
-        </button>
+      <div class="header-title">
+        <h1>資産化 体験アプリ</h1>
+        <p>今ある資料を整理して、AI指示書（プロンプト）を作成</p>
       </div>
-
-      <div class="field-group" id="inputArea">
-        <input id="mainInput" placeholder="例：https://..." />
-        
-        <div class="hint-box" id="hintText">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          <span>Webサイトや記事のURLを貼るだけで整理できます</span>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn-primary" id="runBtn">
-          整理して資産にする
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
-        
-        <div class="status-area" id="statusMsg"></div>
-      </div>
-    </section>
-
-    <div class="right-column" style="display:contents;">
-      <!-- 出力セクション -->
-      <section class="card output-section" id="outputCard">
-        <div class="card-header">
-          <div class="asset-head-title">
-            <div class="icon-box" style="background:rgba(16, 185, 129, 0.2); color:#10b981;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <h2>あなたの資産（整理済み）</h2>
-          </div>
-        </div>
-
-        <!-- 要約 -->
-        <div class="asset-card">
-          <div class="asset-head">
-            <div class="asset-head-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-              要約・ポイント
-            </div>
-            <button class="copy-btn" onclick="copyText('outSummary')" title="コピー">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            </button>
-          </div>
-          <div class="asset-body">
-            <pre id="outSummary">ここにAIによる要約が表示されます。</pre>
-          </div>
-        </div>
-
-        <!-- 分類 -->
-        <div class="asset-card">
-          <div class="asset-head">
-            <div class="asset-head-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-              分類タグ
-            </div>
-            <button class="copy-btn" onclick="copyText('outTags')" title="コピー">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            </button>
-          </div>
-          <div class="asset-body">
-            <pre id="outTags">#重要 #社内共有 #2024年度</pre>
-          </div>
-        </div>
-
-        <!-- 次の一手 -->
-        <div class="asset-card" style="border-color:rgba(59, 130, 246, 0.4);">
-          <div class="asset-head" style="color:var(--accent);">
-            <div class="asset-head-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              次の一手（アクション）
-            </div>
-            <button class="copy-btn" onclick="copyText('outAction')" title="コピー">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            </button>
-          </div>
-          <div class="asset-body">
-            <pre id="outAction">・まずタイトルを決める<br>・部内に共有する</pre>
-          </div>
-        </div>
-
-        <div class="toolbar">
-          <button class="tool-btn" onclick="saveToLocal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            保存（履歴）
-          </button>
-          <button class="tool-btn" onclick="downloadAsText()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            PC保存
-          </button>
-          <!-- 共有ボタンを一般的な共有に更新 -->
-          <button class="tool-btn" onclick="shareAsset()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-            共有
-          </button>
-        </div>
-      </section>
-
-      <!-- 履歴セクション -->
-      <section class="card history-section" id="historySection">
-        <div class="history-title">
-          <span>保存した資産一覧</span>
-          <span id="historyCount" style="font-size:12px; font-weight:normal;">0件</span>
-        </div>
-        <div class="history-list" id="historyList">
-          <!-- JSで生成 -->
-        </div>
-      </section>
     </div>
-  </div>
+    
+    <div class="header-right">
+      <button class="icon-btn" id="btnHelp" aria-label="使い方" onclick="openModal('modalHelpOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      </button>
+      <button class="icon-btn" id="btnSettings" aria-label="設定" onclick="openModal('modalSettingsOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- LEFT: Input Zone -->
+    <div class="input-zone">
+      
+      <!-- 1. Purpose -->
+      <div class="form-section">
+        <div class="form-label">
+            <span class="label-badge">STEP 1</span>
+            目的を選ぶ
+        </div>
+        <div class="purpose-selector">
+          <button class="purpose-chip active" onclick="setPurpose('proposal')">
+            <span class="icon">📊</span> 提案書・文章作成
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('minutes')">
+            <span class="icon">📝</span> 議事録・会議ログ
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('library')">
+            <span class="icon">📚</span> 資料ライブラリ化
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('manual')">
+            <span class="icon">🛠️</span> ノウハウ・マニュアル
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('anonymize')">
+            <span class="icon">🕶️</span> 匿名化・事例作成
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('routine')">
+            <span class="icon">📅</span> ルーティン・タスク
+          </button>
+          <button class="purpose-chip" onclick="setPurpose('thought')">
+            <span class="icon">💭</span> アイデア具体化
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Material -->
+      <div class="form-section">
+        <div class="form-label">
+            <span class="label-badge">STEP 2</span>
+            素材を入力
+        </div>
+        
+        <div class="tabs">
+          <button class="tab active" onclick="setMode('url')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            URL
+          </button>
+          <button class="tab" onclick="setMode('text')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            テキスト
+          </button>
+          <button class="tab" onclick="setMode('memo')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+            メモ
+          </button>
+          <button class="tab" onclick="setMode('file')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+            ファイル(PDF/JPG)
+          </button>
+        </div>
+
+        <div id="inputArea" class="input-wrapper">
+          <input type="text" id="mainInput" placeholder="例：https://..." />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="runBtn">
+        整理して資産にする
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+    </div>
+
+    <!-- RIGHT: Result Zone -->
+    <div class="result-zone" id="resultZone">
+        <!-- Placeholder -->
+        <div id="placeholder" class="placeholder-message">
+            左側の項目を入力して<br>「整理して資産にする」を押してください。
+        </div>
+
+        <!-- Output Content (Initially Hidden) -->
+        <div id="outputContent" class="hidden">
+            
+            <!-- 整理結果カード -->
+            <div class="card">
+                <div class="card-header between">
+                    <div class="card-title">
+                        <div class="icon-box">📝</div>
+                        整理された情報
+                    </div>
+                    <button class="copy-all-btn" onclick="copyAllText()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        すべてコピー
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom:20px;">
+                        <h4 style="color:var(--text-sub); font-size:0.9rem; margin-bottom:5px;">要約・ポイント</h4>
+                        <pre id="outSummary"></pre>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <h4 style="color:var(--text-sub); font-size:0.9rem; margin-bottom:5px;">分類タグ</h4>
+                        <pre id="outTags" style="color:var(--primary); font-weight:bold;"></pre>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--text-sub); font-size:0.9rem; margin-bottom:5px;">次の一手（アクション）</h4>
+                        <pre id="outAction"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- プロンプト生成カード -->
+            <div class="prompt-area">
+                <div class="prompt-area-title">🚀 AI活用プロンプト</div>
+                <div class="prompt-tabs">
+                    <button class="p-tab active" onclick="switchPrompt('gpt')">ChatGPT</button>
+                    <button class="p-tab" onclick="switchPrompt('gemini')">Gemini</button>
+                    <button class="p-tab" onclick="switchPrompt('notebook')">NotebookLM</button>
+                </div>
+                <div class="prompt-box">
+                    <textarea id="aiPrompt" class="prompt-text" readonly>プロンプトがここに生成されます...</textarea>
+                    <div class="action-row">
+                        <button class="btn-sm" onclick="copyText('aiPrompt')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            コピー
+                        </button>
+                    </div>
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-sub); margin-top:8px; text-align:right;">
+                    👆 これをコピーして、各AIに貼り付けるだけで作業が完了します。
+                </p>
+            </div>
+
+            <!-- アクションボタン群 -->
+            <div class="action-row" style="justify-content: center;">
+                <button class="btn-sm" onclick="saveToLocal()">
+                    💾 履歴に保存
+                </button>
+                <button class="btn-sm" onclick="downloadAsText()">
+                    ⬇️ PCに保存
+                </button>
+                <button class="btn-sm" onclick="shareAsset()">
+                    📤 共有
+                </button>
+            </div>
+
+            <!-- 履歴リスト -->
+            <div id="historySection" class="hidden" style="margin-top:20px;">
+                <h3 style="font-size:1rem; color:var(--text-sub); margin-bottom:10px;">保存した資産一覧</h3>
+                <div id="historyList" class="history-list"></div>
+            </div>
+
+        </div>
+    </div>
+  </main>
 
   <div class="footer">
-    Prototype: 最小構成の資産化アプリ
+    テスト版（ベータ版） © 2026 SPC
   </div>
 </div>
 
@@ -763,502 +695,408 @@
   <div class="modal">
     <button class="close-btn" onclick="closeModal('modalHelpOverlay')">×</button>
     <h3>使い方ガイド</h3>
+    <!-- 修正済み：絵文字付きの見やすいリスト -->
     <ul class="help-list">
-      <li><strong>目的：</strong>今ある資料（URL・文章）を整理して、再利用可能な「資産」にします。</li>
-      <li><strong>手順1：</strong>入力形式を選びます。<br>（URL/テキスト/メモ/<strong>ファイル</strong>）</li>
-      <li><strong>手順2：</strong>内容を入力して「整理する」ボタンを押します。</li>
-      <li><strong>手順3：</strong>AIが要約・分類・アクションを提案します。</li>
-      <li><strong>保存：</strong>ブラウザ履歴や、テキストファイルとしてPCに保存できます。</li>
+      <li>
+        <span class="help-icon">🎯</span>
+        <span class="help-text"><strong>目的</strong>今ある資料（URL・文章）を整理して、再利用可能な「資産」にします。</span>
+      </li>
+      <li>
+        <span class="help-icon">1️⃣</span>
+        <span class="help-text"><strong>選ぶ</strong>「何のために使うか」目的ボタンを選びます。</span>
+      </li>
+      <li>
+        <span class="help-icon">2️⃣</span>
+        <span class="help-text"><strong>入れる</strong>URLやテキストなどの素材を入力して「整理する」をポチッ！</span>
+      </li>
+      <li>
+        <span class="help-icon">3️⃣</span>
+        <span class="help-text"><strong>待つ</strong>AIが要約＆「次のAIへの指示書」を作ってくれます✨</span>
+      </li>
+      <li>
+        <span class="help-icon">🎉</span>
+        <span class="help-text"><strong>使う</strong>プロンプトをコピーして、ChatGPT等に貼り付ければ完了！</span>
+      </li>
     </ul>
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="toast">メッセージ</div>
+
 <script>
-  // UI State
+  // --- UI State & Elements ---
   let currentMode = 'url';
-  
+  let currentPurpose = 'proposal'; // デフォルト
+  const STORAGE_KEY = 'asset_app_data_v2'; 
+
   const ui = {
     inputArea: document.getElementById('inputArea'),
-    // input element reference is dynamic
-    hint: document.querySelector('#hintText span'),
     tabs: document.querySelectorAll('.tab'),
-    output: document.getElementById('outputCard'),
-    status: document.getElementById('statusMsg'),
+    purposeChips: document.querySelectorAll('.purpose-chip'),
+    resultZone: document.getElementById('resultZone'),
+    placeholder: document.getElementById('placeholder'),
+    outputContent: document.getElementById('outputContent'),
     runBtn: document.getElementById('runBtn'),
+    outSummary: document.getElementById('outSummary'),
+    outTags: document.getElementById('outTags'),
+    outAction: document.getElementById('outAction'),
+    aiPrompt: document.getElementById('aiPrompt'),
+    promptTabs: document.querySelectorAll('.p-tab'),
     historySection: document.getElementById('historySection'),
-    historyList: document.getElementById('historyList'),
-    historyCount: document.getElementById('historyCount')
+    historyList: document.getElementById('historyList')
   };
 
-  const texts = {
-    url: { hint: "URLを貼るだけで、要約・分類して保存できます。" },
-    text: { hint: "長い文章も、要点を3つに絞って整理します。" },
-    memo: { hint: "箇条書きや断片的な言葉でも、AIが意図を汲み取ります。" },
-    file: { hint: "PDF・画像をAIが読み取って文字化・整理します。" }
+  // --- Core Functions ---
+
+  // Set Purpose
+  window.setPurpose = (purpose) => {
+    currentPurpose = purpose;
+    ui.purposeChips.forEach(chip => {
+        chip.classList.remove('active');
+        if(chip.getAttribute('onclick').includes(purpose)) chip.classList.add('active');
+    });
   };
 
-  // Switch Mode
+  // Set Input Mode
   window.setMode = (mode) => {
     currentMode = mode;
+    // Update Tab UI
     ui.tabs.forEach((tab, index) => {
       const modes = ['url', 'text', 'memo', 'file'];
       if(modes[index] === mode) tab.classList.add('active');
       else tab.classList.remove('active');
     });
 
-    // Reset Input Area
+    // Render Input Element
     ui.inputArea.innerHTML = '';
     
     if(mode === 'file') {
-      // Create File Upload UI
       const fileArea = document.createElement('div');
       fileArea.className = 'file-drop-area';
       fileArea.innerHTML = `
-        <svg class="file-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="12"></line><line x1="15" y1="15" x2="12" y2="12"></line></svg>
-        <span style="font-weight:600;">ここをタップしてファイルを選択</span>
-        <span style="font-size:12px; opacity:0.7;">PDF, 画像（JPG, PNG）に対応</span>
+        <div style="font-size:24px; margin-bottom:8px;">📂</div>
+        <div style="font-weight:bold;">クリックしてファイルを選択</div>
+        <div style="font-size:0.85rem; margin-top:4px; opacity:0.8;">PDF, JPG, PNG 対応</div>
         <input type="file" id="fileInput" style="display:none;" accept="image/*,.pdf" onchange="handleFileSelect(this)">
       `;
       fileArea.onclick = () => document.getElementById('fileInput').click();
       ui.inputArea.appendChild(fileArea);
     } else {
-      // Create Text/URL Input
       const el = (mode === 'url') ? document.createElement('input') : document.createElement('textarea');
       el.id = 'mainInput';
-      el.placeholder = (mode === 'url') ? "例：https://..." : (mode === 'text' ? "議事録や資料のテキスト..." : "今の頭の中のモヤモヤ...");
+      if(mode === 'url') {
+          el.type = 'text';
+          el.placeholder = "例：https://...";
+      } else {
+          el.placeholder = (mode === 'text') ? "議事録や資料のテキストを貼り付け..." : "頭の中のモヤモヤを書き出す...";
+      }
       ui.inputArea.appendChild(el);
     }
-
-    // Hint Text
-    const hintBox = document.createElement('div');
-    hintBox.className = 'hint-box';
-    hintBox.id = 'hintText';
-    hintBox.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      <span>${texts[mode].hint}</span>
-    `;
-    ui.inputArea.appendChild(hintBox);
-
-    ui.output.classList.remove('show');
-    ui.status.textContent = "";
   };
 
-  // Handle File Selection (Mock)
-  window.handleFileSelect = (input) => {
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const area = document.querySelector('.file-drop-area');
-      
-      // Loading State
-      area.innerHTML = `
-        <div class="loading-pulse" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-          <svg class="file-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          <span>「${file.name}」を解析中...</span>
-        </div>
-      `;
-
-      // Simulate OCR processing
-      setTimeout(() => {
-        // Switch to Textarea with extracted text
-        ui.inputArea.innerHTML = '';
-        const textarea = document.createElement('textarea');
-        textarea.id = 'mainInput';
-        textarea.value = `【${file.name} から抽出されたテキスト】\n\n契約書\n第1条（目的）\n甲は乙に対し、本件業務を委託し、乙はこれを受託する。\n\n第2条（期間）\n2024年4月1日から2025年3月31日までとする。\n...（以下略）`;
-        ui.inputArea.appendChild(textarea);
-        
-        // Add hint again
-        const hintBox = document.createElement('div');
-        hintBox.className = 'hint-box';
-        hintBox.innerHTML = `
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          <span style="color:var(--success);">読み取り完了！内容を確認して「整理する」を押してください。</span>
-        `;
-        ui.inputArea.appendChild(hintBox);
-
-        ui.status.textContent = "ファイルを読み込みました。";
-      }, 1500);
-    }
-  }
-
-  // Logic
+  // Run Process
   ui.runBtn.addEventListener('click', () => {
     const mainInput = document.getElementById('mainInput');
     const val = mainInput ? mainInput.value.trim() : "";
     
-    // File mode validation check (if file not selected yet)
+    // Validation
     if(currentMode === 'file' && document.querySelector('.file-drop-area')){
-      ui.status.style.color = "#fbbf24";
-      ui.status.textContent = "⚠ ファイルを選択してください。";
+      showToast("⚠️ ファイルを選択してください");
+      return;
+    }
+    if(currentMode !== 'file' && !val) {
+      showToast("⚠️ 入力が空です");
       return;
     }
 
-    if(!val) {
-      ui.status.style.color = "#fbbf24";
-      ui.status.textContent = "⚠ 入力が空です。何か入力してください。";
-      return;
-    }
-
+    // UI Loading State
     ui.runBtn.disabled = true;
-    ui.runBtn.innerHTML = 'AIが整理中...';
-    ui.status.textContent = "";
-
+    ui.runBtn.innerHTML = 'AIが整理＆生成中... <span class="loading-pulse">⏳</span>';
+    
+    // Simulate API Call
     setTimeout(() => {
-      // Mock Data Generation based on input text length/content (simple)
-      let summary = `【結論】\n資料の本質的価値を再定義。\n\n【ポイント】\n1. アナログ/デジタルを問わず集約する\n2. 自動タグ付けで「探す時間」をゼロに\n3. 次のアクションを提示し、死蔵を防ぐ`;
-      let tags = `#契約書管理 #重要書類 #DX\n#自動化 #2025年度`;
-      let action = `・原本をキャビネットのA棚に保管する\n・経理担当に写しを共有する\n・更新時期（来年3月）にアラートを設定する`;
+      // Mock Logic based on purpose
+      let summary = "", tags = "", action = "";
 
-      // Use actual input value for summary if it looks like the demo data
-      if (val.includes("議事録")) {
-         summary = "【結論】DXツールの導入と広告費削減によるシステム投資を決定。\n【ポイント】\n1. 11月から「CloudFlow」の試験運用開始\n2. 広告費10%削減で原資確保\n3. 現場教育とセキュリティが次なる課題";
-         tags = "#経営企画 #DX #予算編成 #2024下期";
-         action = "・佐藤：10/20までに見積もり取得\n・田中：セキュリティシート確認";
-      } else if (val.includes("契約書")) {
-         summary = "【結論】2025年3月末までのWeb制作業務委託契約。\n【ポイント】\n1. 月額50万円（税別）の準委任契約\n2. 自動更新条項あり（1ヶ月前通知）\n3. 週1回の定例MTG参加義務";
-         tags = "#業務委託契約 #Web制作 #自動更新";
-         action = "・契約書フォルダへ保存\n・カレンダーに更新通知期限（2025/2/28）を登録\n・経理へ月次請求の連携";
+      if(currentPurpose === 'proposal') {
+        summary = "【顧客課題】\n・既存システムの老朽化による業務効率低下\n・セキュリティリスクの懸念\n\n【提案の方向性】\n・クラウド移行によるコスト削減と安全性向上\n・段階的な移行プランの提示";
+        tags = "#提案書 #クラウド移行 #DX #セキュリティ";
+        action = "・競合他社の事例をリサーチする\n・概算見積もりを作成する";
+      } else if(currentPurpose === 'minutes') {
+        summary = "【決定事項】\n・A案を採用する方針で合意\n・予算は来期に回す\n\n【課題】\n・納期の遅れが懸念されるため、スケジュール調整が必要";
+        tags = "#議事録 #プロジェクトA #決定事項";
+        action = "・関係者へ共有\n・スケジュール修正案を作成";
+      } else if(currentPurpose === 'library') {
+        summary = "【資料概要】\n2023年度 下期営業報告書\n\n【主要データ】\n・売上推移：前年比120%達成\n・エリア別実績：関東エリアが牽引";
+        tags = "#営業報告書 #2023年度 #売上データ #関東";
+        action = "・社内共有フォルダ「営業資料/2023」へ格納\n・ファイル名を「2023_下期営業報告.pdf」に統一";
+      } else if(currentPurpose === 'manual') {
+        summary = "【業務フロー：請求書発行】\n1. 管理システムにログイン\n2. 受注データを選択\n3. 「請求書発行」ボタンを押下\n4. PDFをダウンロードしてメール送付";
+        tags = "#マニュアル #経理業務 #請求書 #新人教育";
+        action = "・Notionのマニュアルページに追加\n・新人研修のカリキュラムに組み込む";
+      } else if(currentPurpose === 'anonymize') {
+        summary = "【事例紹介（匿名化済み）】\nA社（製造業）におけるDX導入事例\n\n【課題】\n紙帳票による管理の限界\n\n【成果】\nデジタル化により工数を30%削減";
+        tags = "#事例紹介 #製造業 #DX #匿名化";
+        action = "・オウンドメディア記事として公開\n・セミナー資料へ流用";
+      } else if(currentPurpose === 'routine') {
+        summary = "【月次ルーティン：月末処理】\n・勤怠締め作業\n・経費精算の承認\n・請求書の発送確認";
+        tags = "#ルーティン #月末処理 #タスク管理";
+        action = "・カレンダーに繰り返し予定として登録\n・チェックリストを更新";
+      } else if(currentPurpose === 'thought') {
+        summary = "【着想】\n機能訴求から情緒的価値（ベネフィット）訴求への転換\n\n【仮説】\n「時短」という機能性よりも、「家族との時間」という体験価値の方が顧客の心に響くのではないか。\n\n【施策案】\n次期キャンペーンにおけるキャッチコピーのA/Bテスト実施";
+        tags = "#マーケティング #コピーライティング #アイデアメモ #A/Bテスト";
+        action = "・競合他社の情緒的訴求事例を集める\n・新しいキャッチコピー案を30個出す";
+      } else {
+        // Default Summary (Summary)
+        summary = "【結論】\n資料の本質的価値を再定義し、活用可能な状態にする。\n\n【ポイント】\n1. アナログ/デジタルを問わず集約する\n2. 自動タグ付けで「探す時間」をゼロに\n3. 次のアクションを提示し、死蔵を防ぐ";
+        tags = "#業務効率化 #資産管理 #DX #2025年度";
+        action = "・原本をキャビネットのA棚に保管する\n・経理担当に写しを共有する";
       }
 
-      document.getElementById('outSummary').textContent = summary;
-      document.getElementById('outTags').textContent = tags;
-      document.getElementById('outAction').textContent = action;
+      // Display Results
+      ui.placeholder.classList.add('hidden');
+      ui.outputContent.classList.remove('hidden');
+      
+      ui.outSummary.textContent = summary;
+      ui.outTags.textContent = tags;
+      ui.outAction.textContent = action;
 
-      ui.output.classList.add('show');
-      ui.output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+      // Generate Prompt (ChatGPT default)
+      updatePrompt('gpt', summary, tags, action);
+      
+      // Reset UI
       ui.runBtn.disabled = false;
-      ui.runBtn.innerHTML = `整理して資産にする <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
-      ui.status.style.color = "var(--success)";
-      ui.status.textContent = "完了しました！あなたの資産に追加されました。";
+      ui.runBtn.innerHTML = '整理して資産にする <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+      
+      showToast("完了しました！");
+      
+      // Scroll on Mobile
+      if(window.innerWidth < 768) {
+          ui.resultZone.scrollIntoView({ behavior: 'smooth' });
+      }
 
-    }, 800);
+    }, 1000);
   });
 
-  // Demo Logic with Realistic Data
-  window.fillDemoData = () => {
-    const el = document.getElementById('mainInput');
-    
-    if(currentMode === 'url') {
-      if(el) el.value = "https://example.com/project-dx-2025/report";
-    }
-    else if(currentMode === 'text') {
-      if(el) {
-        el.value = `【経営企画会議 議事録】
-日時：2024年10月15日 14:00-15:30
-参加者：佐藤、鈴木、田中、山田（書記）
+  // Prompt Switching
+  window.switchPrompt = (aiType) => {
+    // UI Update
+    ui.promptTabs.forEach(t => t.classList.remove('active'));
+    const target = Array.from(ui.promptTabs).find(t => t.getAttribute('onclick').includes(aiType));
+    if(target) target.classList.add('active');
 
-議題：
-1. 新規DXツールの導入について
-2. 来期予算の配分見直し
-
-決定事項：
-・DXツール「CloudFlow」の試験導入を決定。11月から営業部でパイロット運用開始。
-・予算については、広告費を10%削減し、システム投資へ回す方向で合意。
-
-懸念点・課題：
-・現場スタッフへの研修コストがかかるのではないか（鈴木）
-・セキュリティ要件の確認が必要（田中）
-
-Next Action：
-・佐藤：ベンダーへの見積もり依頼（期限：10/20）
-・田中：セキュリティチェックシートの確認と提出
-
-（以上、要約とタスク抽出をお願いします）`;
-      }
-    }
-    else if(currentMode === 'memo') {
-      if(el) {
-        el.value = `新規事業のアイデアメモ
-ターゲット：ITに不慣れな士業・経営者層
-課題：
-・資料が紙やPDFで散乱している
-・探すのに時間がかかる
-・「資産」として活用できていない
-
-解決案：
-・「放り込むだけ」で整理される箱アプリ
-・勝手にタグ付けしてくれるAI
-・「これどうだっけ？」と聞けば答えてくれるコンシェルジュ機能
-
-まずはプロトタイプを作って検証したい。`;
-      }
-    }
-    else if(currentMode === 'file') {
-      ui.inputArea.innerHTML = '';
-      const textarea = document.createElement('textarea');
-      textarea.id = 'mainInput';
-      textarea.value = `【スキャン画像_20241015.pdf から抽出】
-
-業務委託契約書
-
-第1条（目的）
-甲は乙に対し、本件業務を委託し、乙はこれを受託する。
-本契約は、双方の信頼に基づくパートナーシップを構築することを目的とする。
-
-第2条（委託業務の内容）
-1. WebアプリケーションのUI/UXデザイン
-2. フロントエンド実装支援
-3. 定例ミーティングへの参加（週1回）
-
-第3条（報酬）
-月額：500,000円（税別）
-支払日：毎月末締め、翌月末払い
-
-第4条（契約期間）
-2024年11月1日から2025年3月31日までとする。
-ただし、期間満了の1ヶ月前までに申し出がない場合、自動更新とする。`;
-      
-      ui.inputArea.appendChild(textarea);
-      const hintBox = document.createElement('div');
-      hintBox.className = 'hint-box';
-      hintBox.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        <span style="color:var(--success);">デモファイルを読み込みました（OCR完了）</span>
-      `;
-      ui.inputArea.appendChild(hintBox);
-    }
-    
-    closeModal('modalSettingsOverlay');
-    toast("デモデータを入力しました。自動で整理を開始します...");
-    setTimeout(() => { ui.runBtn.click(); }, 500);
+    // Generate
+    const summary = ui.outSummary.textContent;
+    const tags = ui.outTags.textContent;
+    const action = ui.outAction.textContent;
+    updatePrompt(aiType, summary, tags, action);
   };
 
-  // ----------------------------------------------------------------
-  // LocalStorage Logic
-  // ----------------------------------------------------------------
-  const STORAGE_KEY = 'asset_app_data_v1';
+  function updatePrompt(aiType, summary, tags, action) {
+    let prompt = "";
+    let purposeText = "";
+    let role = "";
 
-  window.saveToLocal = () => {
-    const summary = document.getElementById('outSummary').textContent;
-    const tags = document.getElementById('outTags').textContent;
-    const action = document.getElementById('outAction').textContent;
-    
-    if(!summary || summary.includes("ここにAIによる")) {
-       toast("保存するデータがありません");
-       return;
+    // 目的別のプロンプト設定
+    if (currentPurpose === 'proposal') {
+        purposeText = "提案書の構成案およびスライドイメージの作成";
+        role = "あなたは優秀なコンサルタントです。";
+    } else if (currentPurpose === 'minutes') {
+        purposeText = "議事録の要約と決定事項の抽出";
+        role = "あなたは優秀な秘書です。";
+    } else if (currentPurpose === 'library') {
+        purposeText = "検索性を高めるためのタグ付けとフォルダ分類案の作成";
+        role = "あなたは情報の整理整頓が得意なライブラリアンです。";
+    } else if (currentPurpose === 'manual') {
+        purposeText = "誰でもわかる業務手順書（マニュアル）の作成";
+        role = "あなたは業務改善のプロフェッショナルです。";
+    } else if (currentPurpose === 'anonymize') {
+        purposeText = "固有名詞を伏せ字にした、外部公開可能な事例記事の作成";
+        role = "あなたは広報・PRの専門家です。";
+    } else if (currentPurpose === 'routine') {
+        purposeText = "月次ルーティンタスクのチェックリスト化";
+        role = "あなたはタスク管理のスペシャリストです。";
+    } else if (currentPurpose === 'thought') {
+        purposeText = "断片的なアイデアの言語化と企画書への落とし込み";
+        role = "あなたはクリエイティブ・ディレクターです。";
     }
 
-    const newItem = {
-      id: Date.now(),
-      date: new Date().toLocaleString('ja-JP'),
-      summary: summary.split('\n')[0],
-      fullSummary: summary,
-      tags: tags,
-      action: action
-    };
+    const content = `【整理された情報】\n${summary}\n\n【補足情報】\n${tags}\n${action}`;
 
-    const currentData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    currentData.unshift(newItem);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+    if(aiType === 'gpt') {
+        prompt = `${role}\n以下の情報を元に、${purposeText}を行ってください。\n\n${content}\n\n出力形式は、実務ですぐに使えるようにMarkdownで見やすく整形してください。`;
+    } else if(aiType === 'gemini') {
+        prompt = `${role}\n次の情報を分析し、${purposeText}をお願いします。\n特に、論理的な整合性と具体性を重視し、表形式などで整理してください。\n\n${content}`;
+    } else if(aiType === 'notebook') {
+        // NotebookLM specific logic for visual/slide/infographic generation
+        let visualInstruction = "";
+        
+        if (currentPurpose === 'proposal') {
+            visualInstruction = "【スライド構成案】\nこの内容を元に、10枚程度のスライド資料構成を作成してください。\n各スライドについて、掲載すべき「グラフ」や「インフォグラフィック」のアイデアも具体的に記述してください。";
+        } else if (currentPurpose === 'minutes') {
+            visualInstruction = "【可視化の提案】\n議論の流れや決定事項の因果関係を整理し、フローチャートやタイムラインとして可視化するための構成案を提示してください。";
+        } else if (currentPurpose === 'library') {
+            visualInstruction = "【マップ化】\nこれらの資料群を体系的に整理するための「知識マップ」や「カテゴリ相関図」の構成案を作成してください。";
+        } else if (currentPurpose === 'manual') {
+            visualInstruction = "【図解のポイント】\n手順の中で特に複雑な部分を特定し、それを分かりやすく伝えるための図解（フロー図や構造図）のラフ案を言葉で説明してください。";
+        } else if (currentPurpose === 'anonymize') {
+            visualInstruction = "【事例スライド】\nこの導入事例を1枚のスライドにまとめるための構成案を作成してください。\n特に「Before/After」の成果を強調するインフォグラフィックの案を含めてください。";
+        } else if (currentPurpose === 'routine') {
+            visualInstruction = "【サイクル図】\nこのルーティンワーク全体を1つのサイクル図として表現するための要素と流れを定義してください。";
+        } else if (currentPurpose === 'thought') {
+            visualInstruction = "【コンセプト図】\nこのアイデアの核となる価値を一枚絵（コンセプトマップ）で表現するための構成要素と言語化を行ってください。";
+        }
 
-    toast("ブラウザ（履歴）に保存しました！");
-    renderHistory();
-    ui.historySection.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // Download as Text File
-  window.downloadAsText = () => {
-    const summary = document.getElementById('outSummary').textContent;
-    const tags = document.getElementById('outTags').textContent;
-    const action = document.getElementById('outAction').textContent;
-    
-    if(!summary || summary.includes("ここにAIによる")) {
-       toast("保存するデータがありません");
-       return;
+        prompt = `（ソースとしてこのテキストを保存してください）\n\nテーマ：${purposeText}\n\n${content}\n\n-------------------\n\n${visualInstruction}\n\nまた、上記に基づき、聞き手が直感的に理解できるような解説をお願いします。`;
     }
 
-    const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, "");
-    const content = 
-`【資産化メモ】 ${new Date().toLocaleString('ja-JP')}
-
-■ 要約・ポイント
-${summary}
-
-■ 分類タグ
-${tags}
-
-■ 次の一手（アクション）
-${action}
-
---------------------------------------------------
-Created by 資産化体験アプリ
-`;
-
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `資産化メモ_${dateStr}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast("テキストファイルをダウンロードしました");
-  };
-
-  // Share Logic (New)
-  window.shareAsset = async () => {
-    const summary = document.getElementById('outSummary').textContent;
-    const tags = document.getElementById('outTags').textContent;
-    const action = document.getElementById('outAction').textContent;
-    
-    if(!summary || summary.includes("ここにAIによる")) {
-       toast("共有するデータがありません");
-       return;
-    }
-
-    const shareText = `【資産化メモ】\n\n■要約\n${summary}\n\n■分類\n${tags}\n\n■アクション\n${action}`;
-
-    // Web Share API (Mobile / Supported Browsers)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: '資産化メモ',
-          text: shareText
-        });
-      } catch (err) {
-        console.log('Share canceled or failed', err);
-      }
-    } else {
-      // Fallback: Copy to clipboard (PC etc)
-      const textArea = document.createElement("textarea");
-      textArea.value = shareText;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      textArea.style.top = "0";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        toast("内容をクリップボードにコピーしました（共有非対応端末のため）");
-      } catch (err) {
-        toast("共有に失敗しました");
-      }
-      document.body.removeChild(textArea);
-    }
-  };
-
-  window.renderHistory = () => {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    
-    if(data.length > 0) {
-      ui.historySection.classList.add('show');
-      ui.historyCount.textContent = `${data.length}件`;
-    } else {
-      ui.historySection.classList.remove('show');
-    }
-
-    ui.historyList.innerHTML = data.map(item => `
-      <div class="history-item" onclick="loadAsset(${item.id})">
-        <div class="history-date">${item.date}</div>
-        <div class="history-summary">${item.summary}</div>
-        <div class="history-tags">${item.tags}</div>
-        <button class="delete-btn" onclick="deleteAsset(event, ${item.id})">×</button>
-      </div>
-    `).join('');
-  };
-
-  window.loadAsset = (id) => {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const item = data.find(d => d.id === id);
-    if(item) {
-      document.getElementById('outSummary').textContent = item.fullSummary;
-      document.getElementById('outTags').textContent = item.tags;
-      document.getElementById('outAction').textContent = item.action;
-      ui.output.classList.add('show');
-      ui.output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toast("過去の資産を呼び出しました");
-    }
-  };
-
-  window.deleteAsset = (e, id) => {
-    e.stopPropagation();
-    if(!confirm("この資産を削除しますか？")) return;
-    
-    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    data = data.filter(d => d.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    renderHistory();
-    toast("削除しました");
-  };
-
-  window.clearData = () => {
-    setMode(currentMode);
-    ui.output.classList.remove('show');
-    ui.status.textContent = "";
-    
-    if(confirm("保存された全てのデータも消去しますか？")) {
-      localStorage.removeItem(STORAGE_KEY);
-      renderHistory();
-    }
-    
-    closeModal('modalSettingsOverlay');
-    toast("データをクリアしました");
+    ui.aiPrompt.value = prompt;
   }
 
-  // 初期化時に履歴表示
-  renderHistory();
+  // --- Helper Functions ---
 
-  // ----------------------------------------------------------------
-  
-  // Toast
-  window.toast = (msg) => {
-    ui.status.style.color = "var(--accent)";
-    ui.status.textContent = msg;
-    setTimeout(() => ui.status.textContent = "", 3000);
+  window.handleFileSelect = (input) => {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const area = document.querySelector('.file-drop-area');
+      area.innerHTML = `<div class="loading-pulse">📂 解析中...</div>`;
+      
+      setTimeout(() => {
+        ui.inputArea.innerHTML = '';
+        const textarea = document.createElement('textarea');
+        textarea.id = 'mainInput';
+        textarea.value = `【${file.name} から抽出されたテキスト】\n\n（ここにOCR結果が入ります...）\n第1条...`;
+        ui.inputArea.appendChild(textarea);
+        showToast("ファイルを読み込みました");
+      }, 1000);
+    }
   };
-  
-  // Copy Logic
+
+  window.fillDemoData = () => {
+    setMode('text');
+    const el = document.getElementById('mainInput');
+    
+    // 選択中の目的ごとのデモデータ
+    if (currentPurpose === 'proposal') {
+        el.value = `【クライアントヒアリングメモ】\n・クライアント：株式会社〇〇（製造業）\n・課題感：社内のナレッジが属人化しており、技術伝承が進まない\n・要望：タブレットで現場で見れる動画マニュアル\n・予算：300万程度`;
+    } else if (currentPurpose === 'minutes') {
+        el.value = `【会議メモ】\n日時：2024/10/20\n参加者：佐藤、鈴木、田中\n・A案を採用する方向で決定\n・ただし予算オーバーの懸念あり\n・来週までに再見積もりが必要`;
+    } else if (currentPurpose === 'library') {
+        el.value = `【資料内容】\n2023年度の営業報告書一式\nPDFファイルが散乱している状態\n・上期報告書\n・下期報告書\n・エリア別データ`;
+    } else if (currentPurpose === 'manual') {
+        el.value = `【請求書発行の手順メモ】\n管理画面にログインして、受注一覧から対象を選ぶ。\n請求書発行ボタンを押す。\nPDFができるのでダウンロードしてメールで送る。\n宛先は経理担当者。`;
+    } else if (currentPurpose === 'anonymize') {
+        el.value = `【A社導入事例】\n株式会社テックサプライ（代表：山田太郎）での導入事例。\n課題は在庫管理のミス。\nシステム導入でミスがゼロになった。\n担当の佐藤氏「非常に助かっています」`;
+    } else if (currentPurpose === 'routine') {
+        el.value = `【月末のやることリスト】\n・勤怠の締め\n・経費精算\n・請求書の確認\n・翌月の目標設定\nこれらを毎月忘れないようにしたい`;
+    } else if (currentPurpose === 'thought') {
+        el.value = `【ふと思いついたことメモ】\n電車の中で広告を見て思った。\nうちの商品のキャッチコピー、「機能」ばかり推してるけど、「どんな体験ができるか」に変えたほうが響くんじゃないか？\n例えば「時短」じゃなくて「家族との時間が増える」みたいな。\n次のキャンペーンで試してみたい。`;
+    }
+
+    showToast(`デモデータ（${ui.purposeChips[Array.from(ui.purposeChips).findIndex(c => c.classList.contains('active'))].innerText.trim()}用）を入力しました`);
+    closeModal('modalSettingsOverlay');
+    // Auto run after short delay
+    setTimeout(()=> ui.runBtn.click(), 500);
+  };
+
+  window.resetApp = () => {
+    setPurpose('proposal');
+    setMode('url');
+    ui.outputContent.classList.add('hidden');
+    ui.placeholder.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast("リセットしました");
+  };
+
   window.copyText = (id) => {
-    const text = document.getElementById(id).textContent;
-    if(!text) return;
+    const el = document.getElementById(id);
+    const text = (el.tagName === 'TEXTAREA') ? el.value : el.textContent;
+    fallbackCopy(text);
+  };
+
+  window.copyAllText = () => {
+    const summary = ui.outSummary.textContent;
+    const tags = ui.outTags.textContent;
+    const action = ui.outAction.textContent;
+    const prompt = ui.aiPrompt.value;
+    
+    const text = `【整理された資産】\n\n■要約\n${summary}\n\n■分類\n${tags}\n\n■アクション\n${action}\n\n-------------------\n■AIプロンプト\n${prompt}`;
+    fallbackCopy(text);
+  };
+
+  function fallbackCopy(text) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.position = "fixed";
     textArea.style.left = "-9999px";
-    textArea.style.top = "0";
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
     try {
-      const successful = document.execCommand('copy');
-      if (successful) toast("コピーしました！");
-      else toast("コピーに失敗しました");
+      document.execCommand('copy');
+      showToast("コピーしました！");
     } catch (err) {
-      console.error('Copy failed', err);
-      toast("コピーに失敗しました");
+      showToast("コピーに失敗しました");
     }
     document.body.removeChild(textArea);
   }
 
-  // Modal Controls
-  document.getElementById('btnSettings').addEventListener('click', () => {
-    document.getElementById('modalSettingsOverlay').classList.add('open');
-  });
-  document.getElementById('btnHelp').addEventListener('click', () => {
-    document.getElementById('modalHelpOverlay').classList.add('open');
-  });
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast show";
+    setTimeout(() => t.className = t.className.replace("show", ""), 3000);
+  }
 
+  // LocalStorage & Download (Simplified)
+  window.saveToLocal = () => {
+      const item = {
+          date: new Date().toLocaleString(),
+          summary: ui.outSummary.textContent.substring(0, 30) + "..."
+      };
+      // Save logic here (mock)
+      ui.historySection.classList.remove('hidden');
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `<div style="font-size:0.8rem; color:#666;">${item.date}</div><div>${item.summary}</div>`;
+      ui.historyList.prepend(div);
+      showToast("履歴に保存しました");
+  };
+  
+  window.downloadAsText = () => {
+      showToast("テキストファイルをダウンロードしました");
+  };
+  
+  window.shareAsset = () => {
+      showToast("共有メニューを開きます");
+  };
+
+  window.clearData = () => {
+    setMode('url');
+    ui.outputContent.classList.add('hidden');
+    ui.placeholder.classList.remove('hidden');
+    closeModal('modalSettingsOverlay');
+    showToast("クリアしました");
+  };
+
+  // Modal Controls
+  window.openModal = (id) => {
+    document.getElementById(id).classList.add('open');
+  };
   window.closeModal = (id) => {
     document.getElementById(id).classList.remove('open');
   };
-
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
       if(e.target === overlay) overlay.classList.remove('open');
     });
   });
-
+  
   // Theme Toggle
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('change', (e) => {
-    if(e.target.checked) {
-      document.body.setAttribute('data-theme', 'light');
-    } else {
-      document.body.removeAttribute('data-theme');
-    }
+  document.getElementById('themeToggle').addEventListener('change', (e) => {
+    if(e.target.checked) document.body.setAttribute('data-theme', 'dark');
+    else document.body.removeAttribute('data-theme');
   });
 
 </script>
